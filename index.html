@@ -17,14 +17,14 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
 .nav-link:hover,.nav-link.active{color:#111;}
 
 /* HOME SCREEN */
-#homeScreen{position:fixed;inset:0;z-index:8999;background:#000;overflow-y:auto;overflow-x:hidden;}
+#homeScreen{position:fixed;inset:0;z-index:8999;background:#fff;overflow-y:auto;overflow-x:hidden;}
 
-/* Hero: full-screen black section with centered eye SVG */
+/* Hero: full-screen white section with centered eye SVG */
 #homeHeroSection{
   position:relative;
   width:100%;
   height:100vh;
-  background:#000;
+  background:#fff;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -67,15 +67,15 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
   pointer-events:none;
 }
 .home-content{text-align:center;pointer-events:all;display:flex;flex-direction:column;align-items:center;}
-.home-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.5em;color:rgba(255,255,255,0.4);margin-bottom:28px;text-transform:uppercase;}
-.home-heading{font-size:52px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:24px;text-shadow:0 2px 16px rgba(0,0,0,0.35);text-transform:uppercase;white-space:nowrap;}
-.home-subtitle{font-size:14px;font-weight:400;color:rgba(255,255,255,0.5);white-space:nowrap;line-height:1.6;margin:0 auto 44px;}
+.home-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.5em;color:#aaa;margin-bottom:28px;text-transform:uppercase;}
+.home-heading{font-size:52px;font-weight:700;color:#111;line-height:1.1;margin-bottom:24px;text-transform:uppercase;white-space:nowrap;}
+.home-subtitle{font-size:14px;font-weight:400;color:#888;white-space:nowrap;line-height:1.6;margin:0 auto 44px;}
 #homeStartBtn{background:#F10F12;color:#fff;border:2px solid #F10F12;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;transition:background 0.18s,border-color 0.18s;margin-bottom:36px;border-radius:100px;}
 #homeStartBtn:hover{background:#c00;border-color:#c00;}
 .home-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
-.home-badge{font-size:10px;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.2);padding:5px 14px;border-radius:100px;letter-spacing:0.05em;}
-.home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#E91C1C;display:flex;flex-direction:column;align-items:center;gap:6px;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;}
-.home-scroll-hint-arrow{font-size:14px;color:#E91C1C;}
+.home-badge{font-size:10px;color:#555;border:1px solid #ddd;padding:5px 14px;border-radius:100px;letter-spacing:0.05em;}
+.home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#F10F12;display:flex;flex-direction:column;align-items:center;gap:6px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.3s;}
+.home-scroll-hint-arrow{font-size:14px;color:#F10F12;}
 
 /* INFO sections on white background */
 #homeInfo{position:relative;z-index:4;background:#fff;pointer-events:all;}
@@ -550,181 +550,95 @@ import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@m
    a full-width horizontal bar as the user scrolls through #homeInfo.
    Fully reversible on scroll up.
    ══════════════════════════════════════════════════════════════════════ */
-(function initScrollEye(){
-  const homeScreen = document.getElementById('homeScreen');
-  const scrollEye  = document.getElementById('scrollEye');
-  const heroSection = document.getElementById('homeHeroSection');
-  const homeInfo   = document.getElementById('homeInfo');
-  const svgEl      = document.getElementById('heroEyeSvg');
-  const scrollHint = document.getElementById('scrollHint');
+// Eye scroll animation — initialized after DOM ready
+function initScrollEye(){
+  const hs   = document.getElementById('homeScreen');
+  const eye  = document.getElementById('scrollEye');
+  const svg  = document.getElementById('heroEyeSvg');
+  const hint = document.getElementById('scrollHint');
+  if(!hs || !eye || !svg) return;
 
-  // Pupil size in SVG units → scale to rendered px
-  const PUPIL_R_SVG = 18;
-  const SVG_W_PX    = 240;
-  const SVG_H_PX    = 144;
-  const SVG_W_VB    = 200; // viewBox width
-  const SVG_H_VB    = 120;
+  const R   = 22;   // pupil radius px
+  const BAR = 5;    // bar height px
 
-  // Scale factor: px per SVG unit
-  const scaleX = SVG_W_PX / SVG_W_VB;
-  const scaleY = SVG_H_PX / SVG_H_VB;
+  function run(){
+    // Hide when not on home
+    if(hs.style.display === 'none'){ eye.style.opacity='0'; return; }
 
-  // Pupil center in SVG viewBox coords: cx=100, cy=60
-  const PUPIL_CX_SVG = 100;
-  const PUPIL_CY_SVG = 60;
+    const st  = hs.scrollTop;
+    const VW  = window.innerWidth;
+    const VH  = window.innerHeight;
 
-  // In rendered px relative to SVG element top-left
-  const pupilCX_local = PUPIL_CX_SVG * scaleX; // 120
-  const pupilCY_local = PUPIL_CY_SVG * scaleY; // 72
-  const pupilR_px     = PUPIL_R_SVG  * Math.min(scaleX, scaleY); // ~18*1.2=21.6
+    // Hint fades as soon as user scrolls
+    if(hint) hint.style.opacity = st < 40 ? '1' : '0';
 
-  // Bar height when fully expanded
-  const BAR_H = 6; // px — thin minimal bar
+    // Total scrollable height inside #homeScreen
+    const maxST = hs.scrollHeight - hs.clientHeight;
 
-  function getPupilAbsPos(){
-    const svgRect = svgEl.getBoundingClientRect();
-    return {
-      x: svgRect.left + pupilCX_local,
-      y: svgRect.top  + pupilCY_local
-    };
-  }
+    // Debug: log values when scrolling
+    // console.log('st:', st, 'maxST:', maxST, 'scrollHeight:', hs.scrollHeight, 'clientHeight:', hs.clientHeight);
 
-  function updateScrollEye(){
-    // Only animate when homeScreen is visible
-    if(homeScreen.style.display === 'none') return;
+    if(maxST <= 0 || st <= 0){ eye.style.opacity='0'; return; }
 
-    const scrollTop   = homeScreen.scrollTop;
-    const heroH       = heroSection.offsetHeight;       // 100vh
-    const infoH       = homeInfo   ? homeInfo.scrollHeight : 0;
-    const totalScroll = heroH + infoH;                  // total scrollable content
+    // t = 0 → 1 over the entire scrollable range
+    const t = Math.max(0, Math.min(1, st / maxST));
 
-    // Animation starts at scrollTop = heroH * 0.5 (halfway through hero)
-    // Animation ends   at scrollTop = totalScroll - window.innerHeight
-    const animStart = heroH * 0.5;
-    const animEnd   = heroH + infoH - window.innerHeight;
+    // Three phases:
+    // 0.00–0.10 → circle emerges (pupil exits eye bottom)
+    // 0.10–0.90 → expands to full-width bar (travels through all sections)
+    // 0.90–1.00 → shrinks back to circle, fades
+    const P1=0.10, P2=0.90;
+    const cx = VW/2;
 
-    if(scrollTop < animStart){
-      // Not yet started — hide scrollEye
-      scrollEye.style.opacity = '0';
-      if(scrollHint) scrollHint.style.opacity = scrollTop < 80 ? '1' : '0';
-      return;
-    }
+    let w, h, left, top, br, op=1;
 
-    if(scrollHint) scrollHint.style.opacity = '0';
+    if(t < P1){
+      const p = t/P1;
+      const e = 1-(1-p)*(1-p); // ease-out
+      // Emerge: circle fades in, anchored at screen center
+      w = R*2; h = R*2;
+      left = cx - R;
+      top  = VH*0.5 - R;
+      br   = '50%';
+      op   = e;
 
-    // Global progress [0..1] across the entire info section
-    const raw = (scrollTop - animStart) / Math.max(1, animEnd - animStart);
-    const t   = Math.max(0, Math.min(1, raw));
-
-    // ── Three-phase animation ──────────────────────────────────────────
-    // Phase 1 [0 → 0.08]: pupil drops out of eye bottom, stays circle
-    // Phase 2 [0.08 → 0.92]: circle morphs to full-width bar
-    // Phase 3 [0.92 → 1]: bar morphs back to circle then fades (for final CTA)
-    //
-    // The bar travels down the page: its top = lerp from heroBottom to bottom of homeInfo
-
-    const VW = window.innerWidth;
-    const VH = window.innerHeight;
-
-    // Fixed pupil screen position (won't change once hero scrolls away — use stored coords)
-    // We store them once and use them via getBoundingClientRect offset trick
-    const heroRect = heroSection.getBoundingClientRect();
-
-    // Pupil's screen y when hero is fully visible (scrollTop=0):
-    // as we scroll, the hero translates up. The pupil's screen y decreases.
-    // Instead we keep a fixed "exit y" = the y just below the SVG eye (bottom of eye shape)
-    // The eye SVG sits at heroH/2 vertically (flex center).
-    // Eye outline bottom in screen coords when scrollTop = animStart:
-    //   heroRect.top is negative at this point.
-    // Simpler: fix the bar's vertical position relative to scroll progress.
-
-    // Phase split
-    const P1_END = 0.08;
-    const P2_END = 0.92;
-
-    let opacity = 1;
-    let w, h, left, top, borderRadius;
-
-    const screenCenterX = VW / 2;
-
-    if(t < P1_END){
-      // Phase 1: pupil drops from its position in the hero, grows slightly
-      const p = t / P1_END; // [0..1]
-      const eased = p * p; // ease in
-
-      // Pupil starts at center of screen (hero is centered), drops down slightly
-      const startCY = VH * 0.5 + pupilCY_local - (SVG_H_PX / 2); // approx center
-      const endCY   = VH * 0.55; // slightly below center
-
-      const cy = startCY + (endCY - startCY) * eased;
-      const r  = pupilR_px * (1 + eased * 0.4);
-
-      w = r * 2; h = r * 2;
-      left = screenCenterX - r;
-      top  = cy - r;
-      borderRadius = '50%';
-      opacity = eased > 0 ? 1 : 0;
-
-    } else if(t < P2_END){
-      // Phase 2: morph from circle → full-width bar, and travel down the page
-      const p = (t - P1_END) / (P2_END - P1_END); // [0..1]
-
-      // Easing: smooth ease-in-out
-      const eased = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
-
-      // Width: pupil diameter → full viewport width
-      w = pupilR_px * 2 + (VW - pupilR_px * 2) * eased;
-
-      // Height: circle → thin bar
-      h = Math.max(BAR_H, pupilR_px * 2 * (1 - eased) + BAR_H * eased);
-
-      // Horizontal position: center always
-      left = screenCenterX - w / 2;
-
-      // Vertical: stays roughly at center of viewport, scrolling feel via the page content
-      // We keep it fixed at a consistent screen position — feels like it's "part of the page"
-      // Travels from center (VH*0.5) toward top third (VH*0.3) as it widens
-      const topStart = VH * 0.52 - h / 2;
-      const topEnd   = VH * 0.48 - h / 2;
-      top = topStart + (topEnd - topStart) * eased;
-
-      // Border radius: full (circle) → pill for bar
-      const rStart = pupilR_px;
-      const rEnd   = BAR_H / 2;
-      const r      = rStart + (rEnd - rStart) * eased;
-      borderRadius = r + 'px';
-      opacity = 1;
+    } else if(t < P2){
+      const p = (t-P1)/(P2-P1);
+      const e = p<0.5 ? 2*p*p : -1+(4-2*p)*p; // ease-in-out
+      // Expand: circle → full-width bar
+      w    = R*2 + (VW - R*2)*e;
+      h    = Math.max(BAR, R*2*(1-e) + BAR*e);
+      left = cx - w/2;
+      top  = VH*0.5 - h/2;
+      br   = Math.max(BAR/2, R*(1-e)) + 'px';
+      op   = 1;
 
     } else {
-      // Phase 3: bar shrinks back to circle then fades
-      const p = (t - P2_END) / (1 - P2_END); // [0..1]
-      const eased = p * p;
-
-      // Reverse: bar back to circle
-      w = VW * (1 - eased) + pupilR_px * 2 * eased;
-      h = Math.max(BAR_H, BAR_H * (1 - eased) + pupilR_px * 2 * eased);
-      left = screenCenterX - w / 2;
-      const topBase = VH * 0.48 - BAR_H / 2;
-      top = topBase + (VH * 0.5 - pupilR_px - topBase) * eased;
-      const r = (BAR_H / 2) * (1 - eased) + pupilR_px * eased;
-      borderRadius = r + 'px';
-      opacity = 1 - eased * 0.6;
+      const p = (t-P2)/(1-P2);
+      const e = p<0.5 ? 2*p*p : -1+(4-2*p)*p;
+      // Shrink back to circle, fade out
+      w    = VW*(1-e) + R*2*e;
+      h    = Math.max(BAR, BAR*(1-e) + R*2*e);
+      left = cx - w/2;
+      top  = VH*0.5 - h/2;
+      br   = Math.max(BAR/2, R*e) + 'px';
+      op   = 1 - e;
     }
 
-    scrollEye.style.opacity      = opacity;
-    scrollEye.style.width        = w + 'px';
-    scrollEye.style.height       = h + 'px';
-    scrollEye.style.left         = left + 'px';
-    scrollEye.style.top          = top + 'px';
-    scrollEye.style.borderRadius = borderRadius;
+    eye.style.opacity      = op;
+    eye.style.width        = w+'px';
+    eye.style.height       = h+'px';
+    eye.style.left         = left+'px';
+    eye.style.top          = top+'px';
+    eye.style.borderRadius = br;
   }
 
-  homeScreen.addEventListener('scroll', updateScrollEye, { passive: true });
-  window.addEventListener('resize', updateScrollEye, { passive: true });
+  hs.addEventListener('scroll', run, {passive:true});
+  window.addEventListener('resize', run, {passive:true});
 
-  // Initial call
-  updateScrollEye();
-})();
+  // Wait for full layout paint before first run
+  requestAnimationFrame(()=>requestAnimationFrame(run));
+}
 
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -984,11 +898,7 @@ bootHome();
 setTimeout(buildModePreviews,200);
 
 function bootHome(){
-  const homeScr=document.getElementById('homeScreen');
-  homeScr.addEventListener('scroll',()=>{
-    const hint=document.querySelector('.home-scroll-hint');
-    if(hint) hint.style.opacity=homeScr.scrollTop>80?'0':'1';
-  });
+  initScrollEye();
 }
 
 /* ══════════════════════════════════════════════════════════════════════
