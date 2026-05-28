@@ -55,10 +55,30 @@ body{
   width:100%;
   height:100vh;
   display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 8% 0 10%;
+  flex-shrink:0;
+}
+#heroLeft{
+  display:flex;
   flex-direction:column;
+  align-items:flex-start;
+  z-index:2;
+  max-width:480px;
+}
+#heroRight{
+  display:flex;
   align-items:center;
   justify-content:center;
-  flex-shrink:0;
+  z-index:2;
+  flex:1;
+}
+#fibCanvas{
+  width:480px;
+  height:480px;
+  display:block;
 }
 
 #eyeContainer{
@@ -94,7 +114,6 @@ body{
 .home-content{text-align:center;pointer-events:all;display:flex;flex-direction:column;align-items:center;}
 .home-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.5em;color:#aaa;margin-bottom:28px;text-transform:uppercase;}
 .home-heading{font-size:52px;font-weight:900;color:#333;line-height:1.1;margin-bottom:48px;text-transform:uppercase;white-space:nowrap;}
-.home-subtitle{font-size:14px;font-weight:400;color:#888;white-space:nowrap;line-height:1.6;margin:0 auto 44px;}
 #homeStartBtn{background:rgba(255,255,255,0.35);color:#333;border:1px solid rgba(255,255,255,0.6);font-family:Almoni,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;transition:background 0.18s,border-color 0.18s;margin-top:24px;margin-bottom:36px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(178,224,243,0.25);}
 #homeStartBtn:hover{background:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.8);}
 .home-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
@@ -324,10 +343,14 @@ body{
 
   <div id="homeHeroSection">
 
-    <div class="home-content">
+    <div id="heroLeft">
       <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
-      <h1 class="home-heading">YOU SEE, WE MEASURE.</h1>
+      <h1 class="home-heading">YOU SEE,<br>WE MEASURE.</h1>
       <button id="homeStartBtn">START</button>
+    </div>
+
+    <div id="heroRight">
+      <canvas id="fibCanvas"></canvas>
     </div>
 
     <div class="home-scroll-hint" id="scrollHint">
@@ -801,6 +824,93 @@ document.getElementById('playBtn').addEventListener('click',()=>{playLayer(dataA
 async function startApp(){await showNameScreen();await boot();}
 bootHome();
 document.fonts.ready.then(() => buildModePreviews());
+
+/* ══════════════════════════════════════════════════════════════════════
+   FIBONACCI SPHERE
+   ══════════════════════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('fibCanvas');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const SIZE = 480;
+  canvas.width  = SIZE * dpr;
+  canvas.height = SIZE * dpr;
+  canvas.style.width  = SIZE + 'px';
+  canvas.style.height = SIZE + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = SIZE, H = SIZE;
+  const cx = W/2, cy = H/2;
+  const DOT_COLOR = '#FF0003';
+  const BALL_R = 200, FOV = 900, COUNT = 2000;
+
+  let mx = cx, my = cy - 80;
+  let sx = cx, sy = cy - 80;
+
+  canvas.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mx = (e.clientX - r.left) * (SIZE / r.width);
+    my = (e.clientY - r.top)  * (SIZE / r.height);
+  });
+
+  function makeFibonacciSphere(n){
+    const pts = [];
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for(let i=0;i<n;i++){
+      const y = 1 - (i/(n-1))*2;
+      const r = Math.sqrt(1 - y*y);
+      const theta = golden * i;
+      pts.push({x: Math.cos(theta)*r, y, z: Math.sin(theta)*r});
+    }
+    return pts;
+  }
+
+  function rotateToGaze(px,py,pz,yaw,pitch){
+    const cp=Math.cos(pitch),sp=Math.sin(pitch);
+    let rx=px, ry=cp*py-sp*pz, rz=sp*py+cp*pz;
+    const cy2=Math.cos(yaw),sy2=Math.sin(yaw);
+    return{x:cy2*rx+sy2*rz, y:ry, z:-sy2*rx+cy2*rz};
+  }
+
+  const spherePts = makeFibonacciSphere(COUNT);
+  let yaw=0, pitch=0;
+
+  function drawSphere(){
+    sx += (mx-sx)*0.09;
+    sy += (my-sy)*0.09;
+    yaw   += (((sx-cx)/(W*0.5))*Math.PI*0.42 - yaw)  *0.09;
+    pitch += (((sy-cy)/(H*0.5))*Math.PI*0.42 - pitch)*0.09;
+
+    ctx.clearRect(0,0,W,H);
+
+    const lightX=-0.35, lightY=-0.45, lightZ=0.82;
+    const allDots=[];
+
+    for(const p of spherePts){
+      const rot=rotateToGaze(p.x,p.y,p.z,yaw,pitch);
+      if(rot.z<=0) continue;
+      const scale=FOV/(FOV-rot.z*BALL_R*0.25);
+      const screenX=cx+rot.x*BALL_R*scale;
+      const screenY=cy+rot.y*BALL_R*scale;
+      const light=rot.x*lightX+rot.y*lightY+rot.z*lightZ;
+      const lighting=0.35+0.65*Math.max(0,light);
+      allDots.push({sx:screenX,sy:screenY,z:rot.z,alpha:lighting});
+    }
+
+    allDots.sort((a,b)=>a.z-b.z);
+
+    for(const p of allDots){
+      ctx.beginPath();
+      ctx.arc(p.sx,p.sy,2.5,0,Math.PI*2);
+      ctx.fillStyle=DOT_COLOR;
+      ctx.globalAlpha=Math.min(p.alpha,1);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(drawSphere);
+  }
+  drawSphere();
+})();
 
 function bootHome(){}
 
