@@ -8,7 +8,25 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-family:Almoni,sans-serif;}
-#mainNav{position:fixed;top:0;left:0;right:0;height:52px;background:#fff;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:9000;cursor:default;}
+
+/* ── Freeform gradient background ── */
+#homeHeroSection::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background-color:#f8fdff;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 15% 20%, rgba(178,224,243,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 50% at 85% 75%, rgba(190,230,247,0.2) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 55% at 62% 8%,  rgba(205,237,250,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 28% 88%, rgba(170,220,242,0.15) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(225,243,252,0.2) 0%, transparent 80%);
+  pointer-events:none;
+}
+#heroEyeSvg{position:relative;z-index:1;}
+.home-content{position:relative;z-index:1;}
+#mainNav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:9000;cursor:default;}
 #navBrand{display:flex;align-items:center;gap:10px;}
 .nav-va{font-size:14px;font-weight:700;color:#111;letter-spacing:0.06em;}
 .nav-title{font-size:10px;font-weight:700;letter-spacing:0.28em;color:#111;font-variant:small-caps;}
@@ -23,7 +41,6 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
   position:relative;
   width:100%;
   height:100vh;
-  background:#fff;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -63,10 +80,10 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
 }
 .home-content{text-align:center;pointer-events:all;display:flex;flex-direction:column;align-items:center;}
 .home-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.5em;color:#aaa;margin-bottom:28px;text-transform:uppercase;}
-.home-heading{font-size:52px;font-weight:700;color:#111;line-height:1.1;margin-bottom:24px;text-transform:uppercase;white-space:nowrap;}
+.home-heading{font-size:52px;font-weight:900;color:#333;line-height:1.1;margin-bottom:48px;text-transform:uppercase;white-space:nowrap;}
 .home-subtitle{font-size:14px;font-weight:400;color:#888;white-space:nowrap;line-height:1.6;margin:0 auto 44px;}
-#homeStartBtn{background:#111;color:#fff;border:2px solid #111;font-family:Almoni,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;transition:background 0.18s,border-color 0.18s;margin-bottom:36px;border-radius:100px;}
-#homeStartBtn:hover{background:#333;border-color:#333;}
+#homeStartBtn{background:rgba(255,255,255,0.35);color:#333;border:1px solid rgba(255,255,255,0.6);font-family:Almoni,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;transition:background 0.18s,border-color 0.18s;margin-top:24px;margin-bottom:36px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(178,224,243,0.25);}
+#homeStartBtn:hover{background:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.8);}
 .home-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
 .home-badge{font-size:10px;color:#555;border:1px solid #ddd;padding:5px 14px;border-radius:100px;letter-spacing:0.05em;}
 .home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#FF0003;display:flex;flex-direction:column;align-items:center;gap:6px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.3s;}
@@ -261,6 +278,8 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
   width:240px;
   height:144px;
   margin-bottom:36px;
+  position:relative;
+  z-index:2;
 }
 
 #scrollEye{
@@ -296,7 +315,7 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
 
     <svg id="heroEyeSvg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
       <path d="M15,60 Q60,20 100,20 Q140,20 185,60 Q140,100 100,100 Q60,100 15,60 Z"
-        fill="none" stroke="#FF0003" stroke-width="5"
+        fill="none" stroke="#FF0003" stroke-width="2.5"
         stroke-linecap="round" stroke-linejoin="round"/>
       <circle id="heroPupil" cx="100" cy="60" r="18" fill="#FF0003"/>
     </svg>
@@ -304,7 +323,7 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
     <div class="home-content">
       <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
       <h1 class="home-heading">YOU SEE, WE MEASURE.</h1>
-      <button id="homeStartBtn">START SESSION</button>
+      <button id="homeStartBtn">START</button>
     </div>
 
     <div class="home-scroll-hint" id="scrollHint">
@@ -850,7 +869,7 @@ document.getElementById('playBtn').addEventListener('click',()=>{playLayer(dataA
 
 async function startApp(){await showNameScreen();await boot();}
 bootHome();
-setTimeout(buildModePreviews,200);
+document.fonts.ready.then(() => buildModePreviews());
 
 function bootHome(){
   initScrollEye();
