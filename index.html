@@ -7,24 +7,37 @@
 <link rel="stylesheet" href="almoni-font.css">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-family:Almoni,sans-serif;}
+body{
+  background-color:#edf7fd;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 15% 8%,  rgba(178,224,243,0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 30% at 85% 18%, rgba(190,230,247,0.6) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 25% at 30% 35%, rgba(205,237,250,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 30% at 70% 52%, rgba(178,224,243,0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 25% at 20% 68%, rgba(190,230,247,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 30% at 80% 82%, rgba(170,220,242,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 20% at 45% 92%, rgba(205,237,250,0.45) 0%, transparent 60%);
+  background-attachment:fixed;
+  overflow:hidden;width:100vw;height:100vh;cursor:none;font-family:Almoni,sans-serif;
+}
 
 /* ── Freeform gradient background ── */
-#homeHeroSection::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  z-index:0;
-  background-color:#f8fdff;
+#homeScreen{
+  background-color:#edf7fd;
   background-image:
-    radial-gradient(ellipse 70% 60% at 15% 20%, rgba(178,224,243,0.25) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 50% at 85% 75%, rgba(190,230,247,0.2) 0%, transparent 65%),
-    radial-gradient(ellipse 45% 55% at 62% 8%,  rgba(205,237,250,0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 28% 88%, rgba(170,220,242,0.15) 0%, transparent 65%),
-    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(225,243,252,0.2) 0%, transparent 80%);
-  pointer-events:none;
+    radial-gradient(ellipse 70% 40% at 15% 8%,  rgba(178,224,243,0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 30% at 85% 18%, rgba(190,230,247,0.6) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 25% at 30% 35%, rgba(205,237,250,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 30% at 70% 52%, rgba(178,224,243,0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 25% at 20% 68%, rgba(190,230,247,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 30% at 80% 82%, rgba(170,220,242,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 20% at 45% 92%, rgba(205,237,250,0.45) 0%, transparent 60%);
+  background-attachment:local;
 }
-#heroEyeSvg{position:relative;z-index:1;}
+#heroEyeSvg{display:none;}
+#scrollEye{display:none;}
+#eyeContainer{display:none;}
+#eyeBall{display:none;}
 .home-content{position:relative;z-index:1;}
 #mainNav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:9000;cursor:default;}
 #navBrand{display:flex;align-items:center;gap:10px;}
@@ -35,7 +48,7 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
 .nav-link:hover,.nav-link.active{color:#111;}
 
 /* HOME SCREEN */
-#homeScreen{position:fixed;inset:0;z-index:8999;background:#fff;overflow-y:auto;overflow-x:hidden;}
+#homeScreen{position:fixed;inset:0;z-index:8999;overflow-y:auto;overflow-x:hidden;}
 
 #homeHeroSection{
   position:relative;
@@ -89,14 +102,14 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
 .home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#FF0003;display:flex;flex-direction:column;align-items:center;gap:6px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.3s;}
 .home-scroll-hint-arrow{font-size:14px;color:#FF0003;}
 
-#homeInfo{position:relative;z-index:4;background:#fff;pointer-events:all;}
+#homeInfo{position:relative;z-index:4;pointer-events:all;}
 .hi-section{padding:72px 64px;}
-.hi-section+.hi-section{border-top:1px solid #eee;}
-.hi-section-dark{background:#0a0a0a;}
+.hi-section+.hi-section{border-top:none;}
+.hi-section-dark{background:transparent;}
 .hi-label{font-size:8px;font-weight:700;letter-spacing:0.5em;color:#111;margin-bottom:20px;text-transform:uppercase;}
-.hi-label-light{color:rgba(255,255,255,0.5);}
+.hi-label-light{color:#555;}
 .hi-title{font-size:28px;font-weight:700;color:#111;margin-bottom:8px;line-height:1.2;white-space:nowrap;}
-.hi-title-light{color:#fff;}
+.hi-title-light{color:#333;}
 .hi-sub{font-size:13px;font-weight:300;color:#888;max-width:480px;line-height:1.7;margin-bottom:40px;}
 .steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;width:100%;}
 .step-item{padding:32px 36px;border-left:1px solid #eee;}
@@ -112,11 +125,11 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
 .howto-n{font-size:10px;font-weight:700;color:#111;letter-spacing:0.2em;}
 .howto-text{font-size:12px;font-weight:300;color:#666;line-height:1.65;}
 .howto-text strong{font-weight:700;color:#111;}
-.modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#f0f0f0;width:100%;}
-.mode-card{background:#fff;padding:20px 20px 16px;border-bottom:1px solid #f0f0f0;}
+.modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(178,224,243,0.2);width:100%;}
+.mode-card{background:rgba(255,255,255,0.3);padding:20px 20px 16px;border-bottom:none;}
 .mode-card-name{font-size:8px;font-weight:700;letter-spacing:0.4em;color:#bbb;margin-bottom:10px;text-transform:uppercase;}
 .mode-card-desc{font-size:10px;font-weight:300;color:#ccc;line-height:1.5;margin-top:10px;}
-.mode-preview-wrap{width:100%;aspect-ratio:5/2;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:2px;}
+.mode-preview-wrap{width:100%;aspect-ratio:5/2;overflow:hidden;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:2px;}
 .mode-preview{display:block;width:100%;height:100%;}
 .va-btn{font-family:Almoni,sans-serif;letter-spacing:0.18em;cursor:pointer;transition:background 0.18s,color 0.18s,border-color 0.18s;border-radius:100px;}
 .va-btn-primary{background:#111;color:#fff;border:2px solid #111;font-size:13px;font-weight:700;padding:14px 48px;}
@@ -307,18 +320,9 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
   </div>
 </nav>
 
-<div id="scrollEye"></div>
-
 <div id="homeScreen">
 
   <div id="homeHeroSection">
-
-    <svg id="heroEyeSvg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15,60 Q60,20 100,20 Q140,20 185,60 Q140,100 100,100 Q60,100 15,60 Z"
-        fill="none" stroke="#FF0003" stroke-width="2.5"
-        stroke-linecap="round" stroke-linejoin="round"/>
-      <circle id="heroPupil" cx="100" cy="60" r="18" fill="#FF0003"/>
-    </svg>
 
     <div class="home-content">
       <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
@@ -344,7 +348,7 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
       </div>
     </div>
 
-    <div class="hi-section" style="background:#f7f7f7;">
+    <div class="hi-section">
       <div class="hi-label">ANALYSIS MODES</div>
       <h2 class="hi-title">Six ways to read visual attention.</h2>
       <p class="hi-sub">Switch between modes in real-time to explore different dimensions of how a viewer scans an image.</p>
@@ -367,7 +371,7 @@ body{background:#fff;overflow:hidden;width:100vw;height:100vh;cursor:none;font-f
     <div class="hi-section hi-section-dark" style="text-align:center;padding:80px 48px;">
       <div class="hi-label hi-label-light">READY?</div>
       <h2 class="hi-title hi-title-light" style="margin-bottom:32px;">Start your session now.</h2>
-      <button id="homeStartBtn2" style="background:#111;color:#fff;border:2px solid #111;font-family:Almoni,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;border-radius:100px;">START SESSION</button>
+      <button id="homeStartBtn2" style="background:rgba(255,255,255,0.35);color:#333;border:1px solid rgba(255,255,255,0.6);font-family:Almoni,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">START SESSION</button>
     </div>
   </div>
 </div>
@@ -540,79 +544,6 @@ import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@m
 /* ══════════════════════════════════════════════════════════════════════
    SCROLL-DRIVEN EYE ANIMATION
    ══════════════════════════════════════════════════════════════════════ */
-function initScrollEye(){
-  const hs   = document.getElementById('homeScreen');
-  const eye  = document.getElementById('scrollEye');
-  const svg  = document.getElementById('heroEyeSvg');
-  const hint = document.getElementById('scrollHint');
-  if(!hs || !eye || !svg) return;
-
-  const R   = 22;
-  const BAR = 5;
-
-  function run(){
-    if(hs.style.display === 'none'){ eye.style.opacity='0'; return; }
-
-    const st  = hs.scrollTop;
-    const VW  = window.innerWidth;
-    const VH  = window.innerHeight;
-
-    if(hint) hint.style.opacity = st < 40 ? '1' : '0';
-
-    const maxST = hs.scrollHeight - hs.clientHeight;
-
-    if(maxST <= 0 || st <= 0){ eye.style.opacity='0'; return; }
-
-    const t = Math.max(0, Math.min(1, st / maxST));
-
-    const P1=0.10, P2=0.90;
-    const cx = VW/2;
-
-    let w, h, left, top, br, op=1;
-
-    if(t < P1){
-      const p = t/P1;
-      const e = 1-(1-p)*(1-p);
-      w = R*2; h = R*2;
-      left = cx - R;
-      top  = VH*0.5 - R;
-      br   = '50%';
-      op   = e;
-
-    } else if(t < P2){
-      const p = (t-P1)/(P2-P1);
-      const e = p<0.5 ? 2*p*p : -1+(4-2*p)*p;
-      w    = R*2 + (VW - R*2)*e;
-      h    = Math.max(BAR, R*2*(1-e) + BAR*e);
-      left = cx - w/2;
-      top  = VH*0.5 - h/2;
-      br   = Math.max(BAR/2, R*(1-e)) + 'px';
-      op   = 1;
-
-    } else {
-      const p = (t-P2)/(1-P2);
-      const e = p<0.5 ? 2*p*p : -1+(4-2*p)*p;
-      w    = VW*(1-e) + R*2*e;
-      h    = Math.max(BAR, BAR*(1-e) + R*2*e);
-      left = cx - w/2;
-      top  = VH*0.5 - h/2;
-      br   = Math.max(BAR/2, R*e) + 'px';
-      op   = 1 - e;
-    }
-
-    eye.style.opacity      = op;
-    eye.style.width        = w+'px';
-    eye.style.height       = h+'px';
-    eye.style.left         = left+'px';
-    eye.style.top          = top+'px';
-    eye.style.borderRadius = br;
-  }
-
-  hs.addEventListener('scroll', run, {passive:true});
-  window.addEventListener('resize', run, {passive:true});
-  requestAnimationFrame(()=>requestAnimationFrame(run));
-}
-
 /* ══════════════════════════════════════════════════════════════════════
    APP
    ══════════════════════════════════════════════════════════════════════ */
@@ -871,9 +802,7 @@ async function startApp(){await showNameScreen();await boot();}
 bootHome();
 document.fonts.ready.then(() => buildModePreviews());
 
-function bootHome(){
-  initScrollEye();
-}
+function bootHome(){}
 
 /* ══════════════════════════════════════════════════════════════════════
    TOOLBAR COLLAPSE
