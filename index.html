@@ -332,11 +332,10 @@ body{
 <body>
 
 <nav id="mainNav">
-  <div id="navBrand">
+  <div id="navBrand" style="cursor:pointer;" id="navBrandLink">
     <span class="nav-va">0.25 SECONDS</span>
   </div>
   <div id="navLinks">
-    <span class="nav-link active" id="navHomeLink">HOME</span>
     <span class="nav-link" id="navSessionLink">DATA</span>
     <span class="nav-link" id="navGalleryLink">GALLERY</span>
     <span class="nav-link" id="navDashboardLink">DASHBOARD</span>
@@ -582,9 +581,10 @@ import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@m
    ══════════════════════════════════════════════════════════════════════ */
 
 const homeScreen=document.getElementById('homeScreen');
-const navHomeLink=document.getElementById('navHomeLink');
+const navHomeLink={classList:{add:()=>{},remove:()=>{}}};// stub — logo handles home now
 const navSessionLink=document.getElementById('navSessionLink');
 const navGalleryLink=document.getElementById('navGalleryLink');
+document.getElementById('navBrand').addEventListener('click',()=>showHome());
 let appStarted=false;
 
 function showHome(){
@@ -624,7 +624,6 @@ navSessionLink.addEventListener('click',()=>{
     goToSession();
   }
 });
-navHomeLink.addEventListener('click',()=>showHome());
 navGalleryLink.addEventListener('click',()=>openGallery());
 
 const dsbHeader=document.getElementById('dsbHeader');
