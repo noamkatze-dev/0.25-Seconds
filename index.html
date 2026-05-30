@@ -41,7 +41,7 @@ body{
 #eyeContainer{display:none;}
 #eyeBall{display:none;}
 .home-content{position:relative;z-index:1;}
-#mainNav{position:fixed;top:0;left:0;right:0;height:52px;background:linear-gradient(135deg,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.15) 100%);backdrop-filter:blur(20px) brightness(1.05);-webkit-backdrop-filter:blur(20px) brightness(1.05);border-bottom:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 2px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(255,255,255,0.2),0 4px 30px rgba(178,224,243,0.12);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:9000;cursor:default;}
+#mainNav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:9000;cursor:default;}
 #navBrand{display:flex;align-items:center;gap:10px;}
 .nav-va{font-size:14px;font-weight:700;color:#111;letter-spacing:0.06em;}
 .nav-title{font-size:10px;font-weight:700;letter-spacing:0.28em;color:#111;font-variant:small-caps;}
@@ -117,8 +117,9 @@ body{
 .home-content{text-align:center;pointer-events:all;display:flex;flex-direction:column;align-items:center;}
 .home-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.5em;color:#aaa;margin-bottom:28px;text-transform:uppercase;}
 .home-heading{font-size:52px;font-weight:900;color:#333;line-height:1.1;margin-bottom:48px;text-transform:uppercase;white-space:nowrap;}
-#homeStartBtn{background:linear-gradient(135deg,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.15) 100%);color:#333;border:1px solid rgba(255,255,255,0.9);font-family:Urbanist,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;transition:all 0.18s;margin-top:24px;margin-bottom:36px;border-radius:100px;backdrop-filter:blur(20px) brightness(1.05);-webkit-backdrop-filter:blur(20px) brightness(1.05);box-shadow:inset 0 2px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(255,255,255,0.2),0 4px 20px rgba(178,224,243,0.15);}
-#homeStartBtn:hover{background:linear-gradient(135deg,rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.25) 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(255,255,255,0.3),0 4px 24px rgba(178,224,243,0.25);}
+#homeStartBtn{background:rgba(255,255,255,0.35);color:#333;border:1px solid rgba(255,255,255,0.6);font-family:Urbanist,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;transition:all 0.18s;margin-top:24px;margin-bottom:36px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(178,224,243,0.25);}
+#homeStartBtn:hover{background:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.8);}
+#homeStartBtn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.8);}
 .home-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
 .home-badge{font-size:10px;color:#555;border:1px solid #ddd;padding:5px 14px;border-radius:100px;letter-spacing:0.05em;}
 .home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#FF0003;display:flex;flex-direction:column;align-items:center;gap:6px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.3s;}
@@ -693,7 +694,7 @@ function renderLib(){const grid=document.getElementById('libGrid');grid.innerHTM
 function updateBeginBtn(){const btn=document.getElementById('libBeginBtn');const ok=imageLibrary.length>0&&!isImageViewed(currentImageIdx);btn.disabled=!ok;btn.style.opacity=ok?'1':'0.4';}
 document.getElementById('libFileInput').addEventListener('change',e=>{Array.from(e.target.files).forEach(file=>{const r=new FileReader();r.onload=ev=>{imageLibrary.push({src:ev.target.result,name:file.name.replace(/\.[^.]+$/,'')});renderLib();};r.readAsDataURL(file);});e.target.value='';});
 
-async function showNameScreen(){return new Promise(resolve=>{const scr=document.getElementById('nameScreen'),inp=document.getElementById('nameInput');const ageInp=document.getElementById('ageInput'),genderInp=document.getElementById('genderInput');const btn=document.getElementById('nameContinue');scr.style.display='flex';inp.focus();function proceed(){const v=inp.value.trim();if(!v){inp.focus();return;}currentUser=v;currentAge=ageInp.value.trim();currentGender=genderInp.value;scr.style.display='none';resolve();}btn.addEventListener('click',proceed);inp.addEventListener('keydown',e=>{if(e.key==='Enter')proceed();});});}
+async function showNameScreen(){return new Promise(resolve=>{const scr=document.getElementById('nameScreen'),inp=document.getElementById('nameInput');const ageInp=document.getElementById('ageInput'),genderInp=document.getElementById('genderInput');const btn=document.getElementById('nameContinue');scr.style.display='flex';inp.focus();async function proceed(){const v=inp.value.trim();if(!v){inp.focus();return;}currentUser=v;currentAge=ageInp.value.trim();currentGender=genderInp.value;scr.style.display='none';currentProfile=await loadProfile(currentUser);if(currentProfile){if(!currentAge&&currentProfile.age)currentAge=currentProfile.age;if(!currentGender&&currentProfile.gender)currentGender=currentProfile.gender;}resolve();}btn.addEventListener('click',proceed);inp.addEventListener('keydown',e=>{if(e.key==='Enter')proceed();});});}
 function startSessionInfoOverlay(){}
 function stopSessionInfoOverlay(){}
 
@@ -794,11 +795,39 @@ function closeGallery(){document.getElementById('galleryScreen').style.display='
 function renderGalleryScreen(){const body=document.getElementById('galleryBody');body.innerHTML='';const byUser=new Map();for(const sess of allSessions){if(!byUser.has(sess.user))byUser.set(sess.user,[]);byUser.get(sess.user).push(sess);}if(byUser.size===0){body.innerHTML='<div style="color:#555;font-size:11px;letter-spacing:0.2em;text-align:center;margin-top:60px;">NO SESSIONS YET</div>';return;}for(const[userName,sessions]of byUser){const block=document.createElement('div');block.className='gallery-user-block';const meta=sessions[0];const metaStr=[meta.age?meta.age+'y':'',meta.gender||'',meta.location||''].filter(Boolean).join(' . ');block.innerHTML='<div class="gallery-user-name">'+userName+'</div><div class="gallery-user-meta">'+metaStr+'</div><div class="gallery-images-row" id="gallery-row-'+userName.replace(/\s/g,'_')+'"></div>';body.appendChild(block);const row=block.querySelector('.gallery-images-row');for(const sess of sessions){const item=document.createElement('div');item.className='gallery-item'+(sess===viewSession?' active-view':'');const dur=sess.sessionDuration?(sess.sessionDuration/1000).toFixed(1)+'s':'--';item.innerHTML='<img class="gallery-item-img" src="'+sess.imageSrc+'" alt="'+sess.imageName+'"/><div class="gallery-item-info"><span class="gallery-item-name">'+sess.imageName+'</span><span class="gallery-item-stats">'+sess.fixationHistory.length+'F . '+sess.gazeLog.length+'S . '+dur+'</span></div>';item.onclick=()=>{viewSession=sess;document.querySelectorAll('.gallery-item').forEach(el=>el.classList.remove('active-view'));item.classList.add('active-view');openData(false);};row.appendChild(item);}}}
 
 function captureSession(){return{user:currentUser||'Unknown',age:currentAge,gender:currentGender,location:userLocation,imageSrc:mainImg.src,imageName:imageLibrary[currentImageIdx]?.name||'image',timestamp:Date.now(),sessionDuration:sessionStartTs?Date.now()-sessionStartTs:0,gazeLog:gazeLog.slice(),fixationHistory:fixationHistory.slice(),saccadeHistory:saccadeHistory.slice(),scanPathHistory:scanPathHistory.slice(),firstFix,firstFixModeTs,sessionStartTs};}
-function openData(pushNew=true){if(pushNew){const snap=captureSession();allSessions.push(snap);viewSession=snap;}const dataScreen=document.getElementById('dataScreen');const dataBody=document.getElementById('dataBody');const compareView=document.getElementById('compareView');dataScreen.style.display='flex';dataBody.style.display='flex';compareView.style.display='none';document.getElementById('sessionViewBtn').classList.add('active');document.getElementById('compareViewBtn').classList.remove('active');document.getElementById('galleryScreen').style.display='none';document.getElementById('dataImg').src=viewSession.imageSrc;document.getElementById('dataImg').style.opacity=showImg?'1':'0';renderDataSessionBadge(viewSession);const activeBtn=document.querySelector('.layer-btn.active');const layer=activeBtn?activeBtn.dataset.layer:'GAZE';dataActiveLayer=layer;playLayer(layer);}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PROFILE — save & load
+   ══════════════════════════════════════════════════════════════════════ */
+let currentProfile = null;
+
+async function loadProfile(name) {
+  try {
+    const r = await fetch(`/api/profile/${encodeURIComponent(name)}`);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (_) { return null; }
+}
+
+async function saveProfile(session) {
+  try {
+    await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:     currentUser,
+        age:      currentAge,
+        gender:   currentGender,
+        location: userLocation,
+        session
+      })
+    });
+  } catch (e) { console.warn('[profile:save]', e); }
+}if(pushNew){const snap=captureSession();allSessions.push(snap);viewSession=snap;}const dataScreen=document.getElementById('dataScreen');const dataBody=document.getElementById('dataBody');const compareView=document.getElementById('compareView');dataScreen.style.display='flex';dataBody.style.display='flex';compareView.style.display='none';document.getElementById('sessionViewBtn').classList.add('active');document.getElementById('compareViewBtn').classList.remove('active');document.getElementById('galleryScreen').style.display='none';document.getElementById('dataImg').src=viewSession.imageSrc;document.getElementById('dataImg').style.opacity=showImg?'1':'0';renderDataSessionBadge(viewSession);const activeBtn=document.querySelector('.layer-btn.active');const layer=activeBtn?activeBtn.dataset.layer:'GAZE';dataActiveLayer=layer;playLayer(layer);}
 
 async function boot(){dotCanvas.width=window.innerWidth;dotCanvas.height=window.innerHeight;window.addEventListener('resize',()=>{dotCanvas.width=window.innerWidth;dotCanvas.height=window.innerHeight;});heatCanvas=document.createElement('canvas');heatCanvas.width=W_HEAT;heatCanvas.height=H_HEAT;heatCtx2=heatCanvas.getContext('2d');const ok=await startEyeTracking();if(ok)await runCalibration();else{calOverlay.style.display='none';enablePointerFallback();}showLib();await new Promise(resolve=>{document.getElementById('libBeginBtn').addEventListener('click',()=>{if(!imageLibrary.length)return;if(isImageViewed(currentImageIdx)){const unviewed=imageLibrary.findIndex((_,i)=>!isImageViewed(i));if(unviewed===-1)return;currentImageIdx=unviewed;}markImageViewed(currentImageIdx);document.getElementById('libraryScreen').style.display='none';imgWrapper.style.display='block';mainImg.src=imageLibrary[currentImageIdx].src;resolve();});});sessionStartTs=Date.now();firstFixModeTs=performance.now();document.getElementById('finishBtn').style.display='block';annLayer.style.opacity='0';startSessionInfoOverlay();setInterval(()=>{if(!gazeOn)return;gazeLog.push({t:Date.now()-sessionStartTs,x:sGX,y:sGY});if(gazeLog.length>10000)gazeLog.shift();},100);requestAnimationFrame(mainLoop);}
 
-document.getElementById('finishBtn').addEventListener('click',()=>{stopSessionInfoOverlay();openData(true);});
+document.getElementById('finishBtn').addEventListener('click',()=>{stopSessionInfoOverlay();const snap=captureSession();saveProfile(snap);openData(true);});
 document.getElementById('sessionViewBtn').addEventListener('click',()=>{
   document.getElementById('sessionViewBtn').classList.add('active');
   document.getElementById('compareViewBtn').classList.remove('active');
