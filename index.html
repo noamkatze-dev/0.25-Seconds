@@ -60,20 +60,22 @@ body{
   grid-template-columns:1fr 480px;
   align-items:center;
   padding:0 10%;
+  gap:80px;
   flex-shrink:0;
 }
 #heroLeft{
   display:flex;
-  flex-direction:column;
-  align-items:flex-start;
+  align-items:center;
+  justify-content:flex-start;
   z-index:2;
+  transform:translateX(15px);
 }
 #heroRight{
   display:flex;
-  align-items:center;
-  justify-content:center;
+  flex-direction:column;
+  align-items:flex-start;
   z-index:2;
-  transform:translateX(15px);
+  text-align:left;
 }
 #fibCanvas{
   width:480px;
@@ -344,13 +346,13 @@ body{
   <div id="homeHeroSection">
 
     <div id="heroLeft">
-      <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
-      <h1 class="home-heading">YOU SEE,<br>WE MEASURE.</h1>
-      <button id="homeStartBtn">START</button>
+      <canvas id="fibCanvas"></canvas>
     </div>
 
     <div id="heroRight">
-      <canvas id="fibCanvas"></canvas>
+      <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
+      <h1 class="home-heading">YOU SEE,<br>WE MEASURE.</h1>
+      <button id="homeStartBtn">START</button>
     </div>
 
     <div class="home-scroll-hint" id="scrollHint">
