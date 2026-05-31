@@ -743,7 +743,7 @@ function goToSession(){hideHome();if(!appStarted){appStarted=true;startApp();}}
 document.getElementById('homeStartBtn').addEventListener('click',goToSession);
 document.getElementById('homeStartBtn2').addEventListener('click',goToSession);
 navSessionLink.addEventListener('click',()=>{
-  if(appStarted){
+  if(userLoggedIn){
     hideAllScreens();
     navSessionLink.classList.add('active');
     if(allSessions.length>0){
