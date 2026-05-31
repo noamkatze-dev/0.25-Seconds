@@ -1273,12 +1273,13 @@ function openAbout(){
 function showEmptyState(screenId,msg){
   const scr=document.getElementById(screenId);
   scr.style.display='flex';
+  scr.style.position='relative';
   // remove existing overlay if any
   const existing=scr.querySelector('.empty-state-overlay');
   if(existing)existing.remove();
   const overlay=document.createElement('div');
   overlay.className='empty-state-overlay';
-  overlay.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:10;';
+  overlay.style.cssText='position:absolute;inset:0;top:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:10;';
   overlay.innerHTML=`
     <div style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#bbb;font-family:Urbanist,sans-serif;margin-bottom:8px;">${msg.toUpperCase()}</div>
     <button class="empty-state-btn" style="background:rgba(255,255,255,0.35);color:#111;border:1px solid rgba(255,255,255,0.6);font-family:Urbanist,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2em;padding:12px 36px;cursor:pointer;border-radius:100px;backdrop-filter:blur(12px);">START SESSION</button>
@@ -1287,7 +1288,6 @@ function showEmptyState(screenId,msg){
     overlay.remove();
     goToSession();
   });
-  scr.style.position='relative';
   scr.appendChild(overlay);
 }
 
