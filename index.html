@@ -716,6 +716,16 @@ const homeScreen=document.getElementById('homeScreen');
 const navHomeLink={classList:{add:()=>{},remove:()=>{}}};// stub — logo handles home now
 const navSessionLink=document.getElementById('navSessionLink');
 const navGalleryLink=document.getElementById('navGalleryLink');
+const navDashboardLink=document.getElementById('navDashboardLink');
+const navProfileLink=document.getElementById('navProfileLink');
+const navAboutLink=document.getElementById('navAboutLink');
+const navLoginBtn=document.getElementById('navLoginBtn');
+navAboutLink.addEventListener('click',()=>openAbout());
+navLoginBtn.addEventListener('click',async()=>{
+  await showNameScreen();
+  showAuthNav();
+  userLoggedIn=true;
+});
 document.getElementById('navBrand').addEventListener('click',()=>showHome());
 let appStarted=false;
 let userLoggedIn=false;
@@ -1059,11 +1069,6 @@ function showAuthNav(){
   document.getElementById('navLoginBtn').classList.add('hidden');
 }
 
-document.getElementById('navLoginBtn').addEventListener('click',async()=>{
-  await showNameScreen();
-  showAuthNav();
-  userLoggedIn=true;
-});
 
 async function startApp(){await showNameScreen();showAuthNav();userLoggedIn=true;await boot();}
 bootHome();
@@ -1265,11 +1270,8 @@ dataToolbarCollapseBtn.addEventListener('click',()=>{
 /* ══════════════════════════════════════════════════════════════════════
    DASHBOARD
    ══════════════════════════════════════════════════════════════════════ */
-const navDashboardLink=document.getElementById('navDashboardLink');
 navDashboardLink.addEventListener('click',()=>openDashboard());
 
-const navAboutLink=document.getElementById('navAboutLink');
-const navProfileLink=document.getElementById('navProfileLink');
 navProfileLink.addEventListener('click',()=>openProfile());
 
 navAboutLink.addEventListener('click',()=>openAbout());
