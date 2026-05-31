@@ -720,8 +720,11 @@ const navDashboardLink=document.getElementById('navDashboardLink');
 const navProfileLink=document.getElementById('navProfileLink');
 const navAboutLink=document.getElementById('navAboutLink');
 const navLoginBtn=document.getElementById('navLoginBtn');
-navAboutLink.addEventListener('click',()=>openAbout());
+console.log('navAboutLink:', navAboutLink);
+console.log('navLoginBtn:', navLoginBtn);
+navAboutLink.addEventListener('click',()=>{console.log('ABOUT clicked');openAbout();});
 navLoginBtn.addEventListener('click',async()=>{
+  console.log('LOGIN clicked');
   await showNameScreen();
   showAuthNav();
   userLoggedIn=true;
