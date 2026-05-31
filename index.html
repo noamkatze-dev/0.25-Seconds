@@ -734,9 +734,61 @@ function mv3(m,v){return[m[0][0]*v[0]+m[0][1]*v[1]+m[0][2]*v[2],m[1][0]*v[0]+m[1
 function resizeCal(){calCanvas.width=window.innerWidth;calCanvas.height=window.innerHeight;}
 
 /* ── Canvas font: all Urbanist ── */
-function drawCalIntro(){const W=calCanvas.width,H=calCanvas.height;calCtx.fillStyle='#fff';calCtx.fillRect(0,0,W,H);calCtx.textAlign='center';calCtx.fillStyle='#111';calCtx.font='700 22px Urbanist';calCtx.fillText('EYE TRACKING CALIBRATION',W/2,H/2-52);calCtx.strokeStyle='#ddd';calCtx.lineWidth=1;calCtx.beginPath();calCtx.moveTo(W/2-220,H/2-36);calCtx.lineTo(W/2+220,H/2-36);calCtx.stroke();calCtx.fillStyle='#666';calCtx.font='400 14px Urbanist';calCtx.fillText('Keep your HEAD STILL - move only your EYES to each dot',W/2,H/2-14);calCtx.fillText('Hold your gaze until the ring fills completely',W/2,H/2+8);calCtx.fillStyle='#aaa';calCtx.font='400 12px Urbanist';calCtx.fillText('Head steady - only eyes should move',W/2,H/2+34);}
-function drawCalDone(){const W=calCanvas.width,H=calCanvas.height;calCtx.fillStyle='#fff';calCtx.fillRect(0,0,W,H);calCtx.textAlign='center';calCtx.fillStyle='#111';calCtx.font='700 24px Urbanist';calCtx.fillText('SYNCHRONIZED',W/2,H/2-8);calCtx.fillStyle='#aaa';calCtx.font='400 13px Urbanist';calCtx.fillText('Calibration complete',W/2,H/2+18);}
-function awaitDot(px,py,index){return new Promise(resolve=>{let progress=0,prevTs=null;const samples=[];function frame(ts){const dt=prevTs?Math.min((ts-prevTs)/1000,0.05):0;prevTs=ts;const s=eyeStab();progress+=s*CAL_FILL_RATE*dt;progress-=(1-s)*CAL_DRAIN_RATE*dt;progress=Math.max(0,Math.min(1,progress));if(s>0.45&&eyeValid)samples.push({ox:curEyeOffX,oy:curEyeOffY});const W=calCanvas.width,H=calCanvas.height;calCtx.fillStyle='#fff';calCtx.fillRect(0,0,W,H);calCtx.textAlign='right';calCtx.fillStyle='#aaa';calCtx.font='400 14px Urbanist';calCtx.fillText((index+1)+'  /  '+CAL_PTS.length,W-28,36);calCtx.textAlign='center';calCtx.fillStyle='#aaa';calCtx.font='400 13px Urbanist';calCtx.fillText('LOOK AT DOT - HEAD STILL - EYES ONLY',W/2,H-26);calCtx.beginPath();calCtx.arc(px,py,22,0,Math.PI*2);calCtx.strokeStyle='#ddd';calCtx.lineWidth=1.5;calCtx.stroke();if(progress>0){calCtx.beginPath();calCtx.arc(px,py,22,-Math.PI/2,-Math.PI/2+progress*Math.PI*2);calCtx.strokeStyle='rgba(255,0,3,'+(0.35+s*0.65)+')';calCtx.lineWidth=2;calCtx.stroke();}const r=3.5+s*2.5;calCtx.beginPath();calCtx.arc(px,py,r,0,Math.PI*2);calCtx.fillStyle='rgba(255,0,3,'+(0.2+s*0.8)+')';calCtx.fill();if(progress>=1){calCtx.beginPath();calCtx.arc(px,py,22,0,Math.PI*2);calCtx.strokeStyle='rgba(255,0,3,0.9)';calCtx.lineWidth=2;calCtx.stroke();const n=samples.length||1;setTimeout(()=>resolve({ox:samples.reduce((a,v)=>a+v.ox,0)/n,oy:samples.reduce((a,v)=>a+v.oy,0)/n}),280);}else requestAnimationFrame(frame);}requestAnimationFrame(frame);});}
+function drawCalIntro(){const W=calCanvas.width,H=calCanvas.height;
+  // gradient background
+  const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
+  grad.addColorStop(0,'rgba(178,224,243,0.7)');
+  grad.addColorStop(1,'rgba(237,247,253,1)');
+  calCtx.fillStyle='#edf7fd';
+  calCtx.fillRect(0,0,W,H);
+  calCtx.fillStyle=grad;
+  calCtx.fillRect(0,0,W,H);
+  // eyebrow
+  calCtx.textAlign='center';
+  calCtx.fillStyle='#aaa';
+  calCtx.font='700 11px Urbanist';
+  calCtx.letterSpacing='0.45em';
+  calCtx.fillText('VISUAL ANALYSIS SYSTEM',W/2,H/2-110);
+  calCtx.letterSpacing='0';
+  // title
+  calCtx.fillStyle='#111';
+  calCtx.font='700 28px Urbanist';
+  calCtx.fillText('EYE TRACKING CALIBRATION',W/2,H/2-68);
+  // divider
+  calCtx.strokeStyle='rgba(178,224,243,0.5)';
+  calCtx.lineWidth=1;
+  calCtx.beginPath();
+  calCtx.moveTo(W/2-200,H/2-46);
+  calCtx.lineTo(W/2+200,H/2-46);
+  calCtx.stroke();
+  // body text
+  calCtx.fillStyle='#888';
+  calCtx.font='300 14px Urbanist';
+  calCtx.fillText('Keep your HEAD STILL — move only your EYES to each dot',W/2,H/2-20);
+  calCtx.fillText('Hold your gaze until the ring fills completely',W/2,H/2+6);
+  calCtx.fillStyle='#bbb';
+  calCtx.font='300 12px Urbanist';
+  calCtx.fillText('Head steady — only eyes should move',W/2,H/2+32);
+}
+function drawCalDone(){const W=calCanvas.width,H=calCanvas.height;
+  const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
+  grad.addColorStop(0,'rgba(178,224,243,0.7)');
+  grad.addColorStop(1,'rgba(237,247,253,1)');
+  calCtx.fillStyle='#edf7fd';calCtx.fillRect(0,0,W,H);
+  calCtx.fillStyle=grad;calCtx.fillRect(0,0,W,H);
+  calCtx.textAlign='center';
+  calCtx.fillStyle='#111';calCtx.font='700 28px Urbanist';
+  calCtx.fillText('SYNCHRONIZED',W/2,H/2-8);
+  calCtx.fillStyle='#aaa';calCtx.font='300 13px Urbanist';
+  calCtx.fillText('Calibration complete',W/2,H/2+20);
+}
+function awaitDot(px,py,index){return new Promise(resolve=>{let progress=0,prevTs=null;const samples=[];function frame(ts){const dt=prevTs?Math.min((ts-prevTs)/1000,0.05):0;prevTs=ts;const s=eyeStab();progress+=s*CAL_FILL_RATE*dt;progress-=(1-s)*CAL_DRAIN_RATE*dt;progress=Math.max(0,Math.min(1,progress));if(s>0.45&&eyeValid)samples.push({ox:curEyeOffX,oy:curEyeOffY});const W=calCanvas.width,H=calCanvas.height;
+  // gradient bg
+  const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
+  grad.addColorStop(0,'rgba(178,224,243,0.7)');grad.addColorStop(1,'rgba(237,247,253,1)');
+  calCtx.fillStyle='#edf7fd';calCtx.fillRect(0,0,W,H);
+  calCtx.fillStyle=grad;calCtx.fillRect(0,0,W,H);
+  calCtx.textAlign='right';calCtx.fillStyle='#bbb';calCtx.font='400 14px Urbanist';calCtx.fillText((index+1)+'  /  '+CAL_PTS.length,W-28,36);calCtx.textAlign='center';calCtx.fillStyle='#999';calCtx.font='400 13px Urbanist';calCtx.fillText('LOOK AT DOT — HEAD STILL — EYES ONLY',W/2,H-26);calCtx.beginPath();calCtx.arc(px,py,22,0,Math.PI*2);calCtx.strokeStyle='rgba(178,224,243,0.5)';calCtx.lineWidth=1.5;calCtx.stroke();if(progress>0){calCtx.beginPath();calCtx.arc(px,py,22,-Math.PI/2,-Math.PI/2+progress*Math.PI*2);calCtx.strokeStyle='rgba(255,0,3,'+(0.35+s*0.65)+')';calCtx.lineWidth=2;calCtx.stroke();}const r=3.5+s*2.5;calCtx.beginPath();calCtx.arc(px,py,r,0,Math.PI*2);calCtx.fillStyle='rgba(255,0,3,'+(0.2+s*0.8)+')';calCtx.fill();if(progress>=1){calCtx.beginPath();calCtx.arc(px,py,22,0,Math.PI*2);calCtx.strokeStyle='rgba(255,0,3,0.9)';calCtx.lineWidth=2;calCtx.stroke();const n=samples.length||1;setTimeout(()=>resolve({ox:samples.reduce((a,v)=>a+v.ox,0)/n,oy:samples.reduce((a,v)=>a+v.oy,0)/n}),280);}else requestAnimationFrame(frame);}requestAnimationFrame(frame);});}
 
 async function runCalibration(){document.getElementById('mainNav').style.display='none';resizeCal();window.addEventListener('resize',resizeCal);drawCalIntro();calStartBtn.style.display='block';await new Promise(r=>calStartBtn.addEventListener('click',r,{once:true}));calStartBtn.style.display='none';const calData=[];for(let i=0;i<CAL_PTS.length;i++){const[nx,ny]=CAL_PTS[i],px=nx*window.innerWidth,py=ny*window.innerHeight;if(i>0)await new Promise(r=>setTimeout(r,320));const{ox,oy}=await awaitDot(px,py,i);calData.push({sx:nx,sy:ny,ox,oy});}if(calData.length>=4)eyeCalMap=fitAffine(calData);drawCalDone();await new Promise(r=>setTimeout(r,900));calOverlay.style.display='none';document.getElementById('mainNav').style.display='flex';}
 
