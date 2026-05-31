@@ -735,7 +735,6 @@ function resizeCal(){calCanvas.width=window.innerWidth;calCanvas.height=window.i
 
 /* ── Canvas font: all Urbanist ── */
 function drawCalIntro(){const W=calCanvas.width,H=calCanvas.height;
-  // gradient background
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
   grad.addColorStop(0,'rgba(178,224,243,0.7)');
   grad.addColorStop(1,'rgba(237,247,253,1)');
@@ -743,32 +742,23 @@ function drawCalIntro(){const W=calCanvas.width,H=calCanvas.height;
   calCtx.fillRect(0,0,W,H);
   calCtx.fillStyle=grad;
   calCtx.fillRect(0,0,W,H);
-  // eyebrow
   calCtx.textAlign='center';
   calCtx.fillStyle='#aaa';
   calCtx.font='700 11px Urbanist';
-  calCtx.letterSpacing='0.45em';
   calCtx.fillText('VISUAL ANALYSIS SYSTEM',W/2,H/2-110);
-  calCtx.letterSpacing='0';
-  // title
   calCtx.fillStyle='#111';
   calCtx.font='700 28px Urbanist';
   calCtx.fillText('EYE TRACKING CALIBRATION',W/2,H/2-68);
-  // divider
   calCtx.strokeStyle='rgba(178,224,243,0.5)';
   calCtx.lineWidth=1;
   calCtx.beginPath();
   calCtx.moveTo(W/2-200,H/2-46);
   calCtx.lineTo(W/2+200,H/2-46);
   calCtx.stroke();
-  // body text
-  calCtx.fillStyle='#888';
+  calCtx.fillStyle='#111';
   calCtx.font='300 14px Urbanist';
-  calCtx.fillText('Keep your HEAD STILL — move only your EYES to each dot',W/2,H/2-20);
+  calCtx.fillText('Keep your head still - move only your eyes to each dot',W/2,H/2-20);
   calCtx.fillText('Hold your gaze until the ring fills completely',W/2,H/2+6);
-  calCtx.fillStyle='#bbb';
-  calCtx.font='300 12px Urbanist';
-  calCtx.fillText('Head steady — only eyes should move',W/2,H/2+32);
 }
 function drawCalDone(){const W=calCanvas.width,H=calCanvas.height;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
