@@ -731,10 +731,17 @@ function fitAffine(data){let A00=0,A01=0,A02=0,A11=0,A12=0,Bx0=0,Bx1=0,Bx2=0,By0
 function inv3(m){const[[a,b,c],[d,e,f],[g,h,k]]=m;const det=a*(e*k-f*h)-b*(d*k-f*g)+c*(d*h-e*g);if(Math.abs(det)<1e-12)return null;const s=1/det;return[[(e*k-f*h)*s,(c*h-b*k)*s,(b*f-c*e)*s],[(f*g-d*k)*s,(a*k-c*g)*s,(c*d-a*f)*s],[(d*h-e*g)*s,(b*g-a*h)*s,(a*e-b*d)*s]];}
 function mv3(m,v){return[m[0][0]*v[0]+m[0][1]*v[1]+m[0][2]*v[2],m[1][0]*v[0]+m[1][1]*v[1]+m[1][2]*v[2],m[2][0]*v[0]+m[2][1]*v[1]+m[2][2]*v[2]];}
 
-function resizeCal(){calCanvas.width=window.innerWidth;calCanvas.height=window.innerHeight;}
+function resizeCal(){
+  const dpr=window.devicePixelRatio||1;
+  calCanvas.width=window.innerWidth*dpr;
+  calCanvas.height=window.innerHeight*dpr;
+  calCanvas.style.width=window.innerWidth+'px';
+  calCanvas.style.height=window.innerHeight+'px';
+  calCtx.scale(dpr,dpr);
+}
 
 /* ── Canvas font: all Urbanist ── */
-function drawCalIntro(){const W=calCanvas.width,H=calCanvas.height;
+function drawCalIntro(){const W=window.innerWidth,H=window.innerHeight;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
   grad.addColorStop(0,'rgba(178,224,243,0.7)');
   grad.addColorStop(1,'rgba(237,247,253,1)');
@@ -760,7 +767,7 @@ function drawCalIntro(){const W=calCanvas.width,H=calCanvas.height;
   calCtx.fillText('Keep your head still - move only your eyes to each dot',W/2,H/2-20);
   calCtx.fillText('Hold your gaze until the ring fills completely',W/2,H/2+6);
 }
-function drawCalDone(){const W=calCanvas.width,H=calCanvas.height;
+function drawCalDone(){const W=window.innerWidth,H=window.innerHeight;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
   grad.addColorStop(0,'rgba(178,224,243,0.7)');
   grad.addColorStop(1,'rgba(237,247,253,1)');
@@ -772,8 +779,7 @@ function drawCalDone(){const W=calCanvas.width,H=calCanvas.height;
   calCtx.fillStyle='#aaa';calCtx.font='300 13px Urbanist';
   calCtx.fillText('Calibration complete',W/2,H/2+20);
 }
-function awaitDot(px,py,index){return new Promise(resolve=>{let progress=0,prevTs=null;const samples=[];function frame(ts){const dt=prevTs?Math.min((ts-prevTs)/1000,0.05):0;prevTs=ts;const s=eyeStab();progress+=s*CAL_FILL_RATE*dt;progress-=(1-s)*CAL_DRAIN_RATE*dt;progress=Math.max(0,Math.min(1,progress));if(s>0.45&&eyeValid)samples.push({ox:curEyeOffX,oy:curEyeOffY});const W=calCanvas.width,H=calCanvas.height;
-  // gradient bg
+function awaitDot(px,py,index){return new Promise(resolve=>{let progress=0,prevTs=null;const samples=[];function frame(ts){const dt=prevTs?Math.min((ts-prevTs)/1000,0.05):0;prevTs=ts;const s=eyeStab();progress+=s*CAL_FILL_RATE*dt;progress-=(1-s)*CAL_DRAIN_RATE*dt;progress=Math.max(0,Math.min(1,progress));if(s>0.45&&eyeValid)samples.push({ox:curEyeOffX,oy:curEyeOffY});const W=window.innerWidth,H=window.innerHeight;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
   grad.addColorStop(0,'rgba(178,224,243,0.7)');grad.addColorStop(1,'rgba(237,247,253,1)');
   calCtx.fillStyle='#edf7fd';calCtx.fillRect(0,0,W,H);
