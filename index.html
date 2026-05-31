@@ -746,9 +746,8 @@ navSessionLink.addEventListener('click',()=>{
   if(userLoggedIn){
     hideAllScreens();
     navSessionLink.classList.add('active');
-    if(allSessions.length>0){
-      document.getElementById('dataScreen').style.display='flex';
-    } else {
+    document.getElementById('dataScreen').style.display='flex';
+    if(allSessions.length===0){
       showEmptyState('dataScreen','Start your first session to see your data.');
     }
   } else {
@@ -976,10 +975,10 @@ document.getElementById('cf-layer').addEventListener('change',renderCompareView)
 function openGallery(){
   hideAllScreens();
   navGalleryLink.classList.add('active');
+  document.getElementById('galleryScreen').style.display='flex';
   if(allSessions.length===0){
     showEmptyState('galleryScreen','Start your first session to see your gallery.');
   } else {
-    document.getElementById('galleryScreen').style.display='flex';
     renderGalleryScreen();
   }
 }
@@ -1057,6 +1056,8 @@ function hideAllScreens(){
   document.getElementById('imgWrapper').style.display='none';
   document.getElementById('nameScreen').style.display='none';
   document.getElementById('libraryScreen').style.display='none';
+  // remove any empty state overlays
+  document.querySelectorAll('.empty-state-overlay').forEach(el=>el.remove());
   [navSessionLink,navGalleryLink,navDashboardLink,navProfileLink,navAboutLink,navHomeLink].forEach(l=>l.classList.remove('active'));
 }
 
