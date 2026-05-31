@@ -194,13 +194,6 @@ body{
   border-color:rgba(255,255,255,0.6) !important;
 }
 
-/* name screen form glass */
-.ns-field input,
-.ns-field select{
-  background:rgba(255,255,255,0.4) !important;
-  border-bottom-color:rgba(100,160,200,0.35) !important;
-}
-
 /* library screen glass */
 #libraryScreen{
   background-attachment:fixed;
@@ -327,6 +320,9 @@ body{
 .ns-field input,.ns-field select{background:#fff;border:1px solid rgba(255,255,255,0.7);color:#111;font-family:Urbanist,sans-serif;font-size:16px;letter-spacing:0.08em;padding:12px 16px;width:100%;caret-color:#111;transition:border-color 0.15s;-webkit-appearance:none;border-radius:6px;outline:none;}
 .ns-field input:focus,.ns-field select:focus{border-color:rgba(178,224,243,0.8);outline:none;}
 .ns-field input::placeholder{color:#bbb;font-size:14px;}
+.ns-field input:-webkit-autofill,
+.ns-field input:-webkit-autofill:hover,
+.ns-field input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0px 1000px #fff inset;-webkit-text-fill-color:#111;transition:background-color 5000s ease-in-out 0s;}
 .ns-row{display:flex;gap:24px;width:100%;}
 .ns-row .ns-field{flex:1;}
 #dashboardScreen{display:none;position:fixed;inset:0;z-index:1600;;flex-direction:column;overflow:hidden;padding-top:52px;}
