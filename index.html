@@ -720,11 +720,8 @@ const navDashboardLink=document.getElementById('navDashboardLink');
 const navProfileLink=document.getElementById('navProfileLink');
 const navAboutLink=document.getElementById('navAboutLink');
 const navLoginBtn=document.getElementById('navLoginBtn');
-console.log('navAboutLink:', navAboutLink);
-console.log('navLoginBtn:', navLoginBtn);
-navAboutLink.addEventListener('click',()=>{console.log('ABOUT clicked');openAbout();});
+navAboutLink.addEventListener('click',()=>openAbout());
 navLoginBtn.addEventListener('click',async()=>{
-  console.log('LOGIN clicked');
   await showNameScreen();
   showAuthNav();
   userLoggedIn=true;
@@ -901,7 +898,11 @@ function renderLib(){const grid=document.getElementById('libGrid');grid.innerHTM
 function updateBeginBtn(){const btn=document.getElementById('libBeginBtn');const ok=imageLibrary.length>0&&!isImageViewed(currentImageIdx);btn.disabled=!ok;btn.style.opacity=ok?'1':'0.4';}
 document.getElementById('libFileInput').addEventListener('change',e=>{Array.from(e.target.files).forEach(file=>{const r=new FileReader();r.onload=ev=>{imageLibrary.push({src:ev.target.result,name:file.name.replace(/\.[^.]+$/,'')});renderLib();};r.readAsDataURL(file);});e.target.value='';});
 
-async function showNameScreen(){return new Promise(resolve=>{const scr=document.getElementById('nameScreen'),inp=document.getElementById('nameInput');const ageInp=document.getElementById('ageInput'),genderInp=document.getElementById('genderInput');const btn=document.getElementById('nameContinue');scr.style.display='flex';inp.focus();async function proceed(){const v=inp.value.trim();if(!v){inp.focus();return;}currentUser=v;currentAge=ageInp.value.trim();currentGender=genderInp.value;scr.style.display='none';currentProfile=await loadProfile(currentUser);if(currentProfile){if(!currentAge&&currentProfile.age)currentAge=currentProfile.age;if(!currentGender&&currentProfile.gender)currentGender=currentProfile.gender;}resolve();}btn.addEventListener('click',proceed);inp.addEventListener('keydown',e=>{if(e.key==='Enter')proceed();});});}
+async function showNameScreen(){return new Promise(resolve=>{
+  // הסתר כל המסכים לפני הצגת מסך השם
+  document.getElementById('aboutScreen').style.display='none';
+  document.getElementById('homeScreen').style.display='none';
+  const scr=document.getElementById('nameScreen'),inp=document.getElementById('nameInput');const ageInp=document.getElementById('ageInput'),genderInp=document.getElementById('genderInput');const btn=document.getElementById('nameContinue');scr.style.display='flex';inp.focus();async function proceed(){const v=inp.value.trim();if(!v){inp.focus();return;}currentUser=v;currentAge=ageInp.value.trim();currentGender=genderInp.value;scr.style.display='none';currentProfile=await loadProfile(currentUser);if(currentProfile){if(!currentAge&&currentProfile.age)currentAge=currentProfile.age;if(!currentGender&&currentProfile.gender)currentGender=currentProfile.gender;}resolve();}btn.addEventListener('click',proceed);inp.addEventListener('keydown',e=>{if(e.key==='Enter')proceed();});});}
 function startSessionInfoOverlay(){}
 function stopSessionInfoOverlay(){}
 
