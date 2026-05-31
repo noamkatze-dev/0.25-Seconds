@@ -386,10 +386,10 @@ body{
     <span class="nav-va">0.25 SECONDS</span>
   </div>
   <div id="navLinks">
-    <span class="nav-link" id="navSessionLink">DATA</span>
-    <span class="nav-link" id="navGalleryLink">GALLERY</span>
-    <span class="nav-link" id="navDashboardLink">DASHBOARD</span>
-    <span class="nav-link" id="navProfileLink">PROFILE</span>
+    <span class="nav-link nav-authenticated" id="navSessionLink" style="display:none;">DATA</span>
+    <span class="nav-link nav-authenticated" id="navGalleryLink" style="display:none;">GALLERY</span>
+    <span class="nav-link nav-authenticated" id="navDashboardLink" style="display:none;">DASHBOARD</span>
+    <span class="nav-link nav-authenticated" id="navProfileLink" style="display:none;">PROFILE</span>
     <span class="nav-link" id="navAboutLink">ABOUT</span>
   </div>
 </nav>
@@ -737,16 +737,18 @@ navSessionLink.addEventListener('click',()=>{
     homeScreen.style.display='none';
     document.getElementById('galleryScreen').style.display='none';
     document.getElementById('dashboardScreen').style.display='none';
-    if(allSessions.length>0||document.getElementById('imgWrapper').style.display==='block'){
-      navSessionLink.classList.add('active');
-      navHomeLink.classList.remove('active');
-      navGalleryLink.classList.remove('active');
-      navDashboardLink.classList.remove('active');
-      if(allSessions.length>0){
-        document.getElementById('dataScreen').style.display='flex';
-      }
+    document.getElementById('aboutScreen').style.display='none';
+    document.getElementById('profileScreen').style.display='none';
+    navSessionLink.classList.add('active');
+    navHomeLink.classList.remove('active');
+    navGalleryLink.classList.remove('active');
+    navDashboardLink.classList.remove('active');
+    navProfileLink.classList.remove('active');
+    navAboutLink.classList.remove('active');
+    if(allSessions.length>0){
+      document.getElementById('dataScreen').style.display='flex';
     } else {
-      goToSession();
+      showEmptyState('dataScreen','Complete a session first to see your data.');
     }
   } else {
     goToSession();
@@ -970,9 +972,15 @@ function openGallery(){
   homeScreen.style.display='none';
   document.getElementById('dataScreen').style.display='none';
   document.getElementById('dashboardScreen').style.display='none';
+  document.getElementById('aboutScreen').style.display='none';
+  document.getElementById('profileScreen').style.display='none';
   const screen=document.getElementById('galleryScreen');screen.style.display='flex';
-  navGalleryLink.classList.add('active');navHomeLink.classList.remove('active');navSessionLink.classList.remove('active');navDashboardLink.classList.remove('active');
-  renderGalleryScreen();
+  navGalleryLink.classList.add('active');navHomeLink.classList.remove('active');navSessionLink.classList.remove('active');navDashboardLink.classList.remove('active');navProfileLink.classList.remove('active');navAboutLink.classList.remove('active');
+  if(allSessions.length===0){
+    showEmptyState('galleryScreen','No sessions yet. Complete a session first.');
+  } else {
+    renderGalleryScreen();
+  }
 }
 function closeGallery(){document.getElementById('galleryScreen').style.display='none';navGalleryLink.classList.remove('active');}
 function renderGalleryScreen(){const body=document.getElementById('galleryBody');body.innerHTML='';const byUser=new Map();for(const sess of allSessions){if(!byUser.has(sess.user))byUser.set(sess.user,[]);byUser.get(sess.user).push(sess);}if(byUser.size===0){body.innerHTML='<div style="color:#555;font-size:11px;letter-spacing:0.2em;text-align:center;margin-top:60px;">NO SESSIONS YET</div>';return;}for(const[userName,sessions]of byUser){const block=document.createElement('div');block.className='gallery-user-block';const meta=sessions[0];const metaStr=[meta.age?meta.age+'y':'',meta.gender||'',meta.location||''].filter(Boolean).join(' . ');block.innerHTML='<div class="gallery-user-name">'+userName+'</div><div class="gallery-user-meta">'+metaStr+'</div><div class="gallery-images-row" id="gallery-row-'+userName.replace(/\s/g,'_')+'"></div>';body.appendChild(block);const row=block.querySelector('.gallery-images-row');for(const sess of sessions){const item=document.createElement('div');item.className='gallery-item'+(sess===viewSession?' active-view':'');const dur=sess.sessionDuration?(sess.sessionDuration/1000).toFixed(1)+'s':'--';item.innerHTML='<img class="gallery-item-img" src="'+sess.imageSrc+'" alt="'+sess.imageName+'"/><div class="gallery-item-info"><span class="gallery-item-name">'+sess.imageName+'</span><span class="gallery-item-stats">'+sess.fixationHistory.length+'F . '+sess.gazeLog.length+'S . '+dur+'</span></div>';item.onclick=()=>{viewSession=sess;document.querySelectorAll('.gallery-item').forEach(el=>el.classList.remove('active-view'));item.classList.add('active-view');openData(false);};row.appendChild(item);}}}
@@ -1038,7 +1046,11 @@ document.getElementById('withoutImgBtn').addEventListener('click',()=>{showImg=f
 document.querySelectorAll('.layer-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.layer-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');dataActiveLayer=btn.dataset.layer;playLayer(dataActiveLayer);});});
 document.getElementById('playBtn').addEventListener('click',()=>{playLayer(dataActiveLayer||'GAZE');});
 
-async function startApp(){await showNameScreen();await boot();}
+function showAuthNav(){
+  document.querySelectorAll('.nav-authenticated').forEach(el=>el.style.display='');
+}
+
+async function startApp(){await showNameScreen();showAuthNav();await boot();}
 bootHome();
 document.fonts.ready.then(() => buildModePreviews());
 
@@ -1262,17 +1274,31 @@ function openAbout(){
   navProfileLink.classList.remove('active');
 }
 
+function showEmptyState(screenId,msg){
+  const scr=document.getElementById(screenId);
+  scr.style.display='flex';
+  scr.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding-top:52px;"><div style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#bbb;font-family:Urbanist,sans-serif;margin-bottom:8px;">${msg.toUpperCase()}</div><button onclick="goToSession();document.getElementById('${screenId}').innerHTML='';" style="background:rgba(255,255,255,0.35);color:#111;border:1px solid rgba(255,255,255,0.6);font-family:Urbanist,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2em;padding:12px 36px;cursor:pointer;border-radius:100px;backdrop-filter:blur(12px);">START SESSION</button></div>`;
+}
+
 function openDashboard(){
   homeScreen.style.display='none';
   document.getElementById('dataScreen').style.display='none';
   document.getElementById('galleryScreen').style.display='none';
+  document.getElementById('aboutScreen').style.display='none';
+  document.getElementById('profileScreen').style.display='none';
   const scr=document.getElementById('dashboardScreen');
   scr.style.display='flex';
   navDashboardLink.classList.add('active');
   navHomeLink.classList.remove('active');
   navSessionLink.classList.remove('active');
   navGalleryLink.classList.remove('active');
-  renderDashboard();
+  navProfileLink.classList.remove('active');
+  navAboutLink.classList.remove('active');
+  if(allSessions.length===0){
+    showEmptyState('dashboardScreen','Complete a session first to see your dashboard.');
+  } else {
+    renderDashboard();
+  }
 }
 
 function renderDashboard(){
