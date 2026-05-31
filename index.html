@@ -159,10 +159,64 @@ body{
 .va-btn-primary:hover{background:#333;border-color:#333;}
 .va-btn-secondary{background:#fff;color:#111;border:2px solid #111;font-size:12px;font-weight:700;padding:9px 24px;}
 .va-btn-secondary:hover{background:#111;color:#fff;}
-#calOverlay{position:fixed;inset:0;z-index:1000;background:#fff;}
-#calCanvas{position:absolute;inset:0;width:100%;height:100%;}
+/* ══════════════════════════════════════════════════════════════════════
+   GLOBAL BACKGROUND — gradient on all screens
+   ══════════════════════════════════════════════════════════════════════ */
+#nameScreen,
+#libraryScreen,
+#calOverlay,
+#dataScreen,
+#galleryScreen,
+#dashboardScreen,
+#profileScreen{
+  background-color:#edf7fd;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 15% 8%,  rgba(178,224,243,0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 30% at 85% 18%, rgba(190,230,247,0.6) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 25% at 30% 35%, rgba(205,237,250,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 30% at 70% 52%, rgba(178,224,243,0.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 25% at 20% 68%, rgba(190,230,247,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 30% at 80% 82%, rgba(170,220,242,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 20% at 45% 92%, rgba(205,237,250,0.45) 0%, transparent 60%);
+  background-attachment:fixed;
+}
+
+/* glass cards for dashboard, gallery, profile, data */
+.dash-kpi,
+.dash-user-card,
+.dash-chart-area,
+.gallery-item,
+.compare-panel,
+.lib-card{
+  background:rgba(255,255,255,0.75) !important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-color:rgba(255,255,255,0.6) !important;
+}
+
+/* name screen form glass */
+.ns-field input,
+.ns-field select{
+  background:rgba(255,255,255,0.4) !important;
+  border-bottom-color:rgba(100,160,200,0.35) !important;
+}
+
+/* library screen glass */
+#libraryScreen{
+  background-attachment:fixed;
+}
+
+/* calibration overlay */
+#calOverlay{
+  background-attachment:fixed;
+}
+#calCanvas{
+  background:transparent !important;
+}
+#calOverlay{position:fixed;inset:0;z-index:1000;}
+#calCanvas{position:absolute;inset:0;width:100%;height:100%;background:transparent;}
 #calStartBtn{position:absolute;top:58%;left:50%;transform:translateX(-50%);display:none;z-index:1001;}
-.screen{display:none;position:fixed;inset:0;z-index:1100;background:#fff;flex-direction:column;align-items:center;justify-content:center;}
+.screen{display:none;position:fixed;inset:0;z-index:1100;flex-direction:column;align-items:center;justify-content:center;}
 .screen-title{font-size:9px;font-weight:300;letter-spacing:0.6em;color:#bbb;margin-bottom:36px;}
 .lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:720px;width:90vw;margin-bottom:36px;max-height:52vh;overflow-y:auto;}
 .lib-card{aspect-ratio:4/3;border:1.5px solid #e0e0e0;cursor:pointer;overflow:hidden;position:relative;transition:border-color 0.15s;}
@@ -186,7 +240,7 @@ body{
 #sessionInfoOverlay{display:none !important;}
 #finishBtn{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-family:Urbanist,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;color:#fff;background:rgba(0,0,0,0.55);border:1.5px solid rgba(255,255,255,0.5);padding:11px 32px;cursor:pointer;z-index:60;display:none;transition:background 0.15s,color 0.15s,border-color 0.15s;border-radius:100px;backdrop-filter:blur(8px);}
 #finishBtn:hover{background:rgba(255,255,255,0.95);color:#111;border-color:#fff;}
-#dataScreen{display:none;position:fixed;inset:0;z-index:1500;background:#fff;flex-direction:column;overflow:hidden;padding-top:52px;}
+#dataScreen{display:none;position:fixed;inset:0;z-index:1500;flex-direction:column;overflow:hidden;padding-top:52px;}
 #dataHeader{display:none;}
 #dataBody{display:flex;flex:1;overflow:hidden;position:relative;}
 #dataCenter{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
@@ -232,11 +286,11 @@ body{
 .view-tab{font-family:Urbanist,sans-serif;font-size:7.5px;font-weight:700;letter-spacing:0.06em;padding:5px 9px;border:1.5px solid transparent;background:transparent;color:#555;cursor:pointer;transition:all 0.15s;border-radius:100px;}
 .view-tab.active{background:rgba(255,255,255,0.07);color:#fff;border-color:rgba(255,255,255,0.35);}
 .view-tab:hover{color:#fff;border-color:rgba(255,255,255,0.2);}
-#galleryScreen{display:none;position:fixed;inset:0;z-index:1500;background:#f5f5f5;flex-direction:column;overflow:hidden;padding-top:52px;}
-#galleryHeader{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid #eee;flex-shrink:0;background:#fff;}
+#galleryScreen{display:none;position:fixed;inset:0;z-index:1500;;flex-direction:column;overflow:hidden;padding-top:52px;}
+#galleryHeader{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.4);flex-shrink:0;background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
 #galleryHeader .gallery-title{font-size:11px;font-weight:700;letter-spacing:0.45em;color:#111;}
 .gallery-header-right{display:flex;align-items:center;gap:8px;}
-#galleryBody{flex:1;overflow-y:auto;padding:24px;background:#f5f5f5;padding-top:16px;}
+#galleryBody{flex:1;overflow-y:auto;padding:24px;;padding-top:16px;}
 .gallery-user-block{margin-bottom:40px;}
 .gallery-user-name{font-size:11px;font-weight:700;letter-spacing:0.3em;color:#111;text-transform:uppercase;margin-bottom:6px;}
 .gallery-user-meta{font-size:9px;font-weight:300;color:#555;letter-spacing:0.06em;margin-bottom:16px;}
@@ -249,12 +303,12 @@ body{
 .gallery-item-name{font-size:8px;font-weight:700;letter-spacing:0.1em;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .gallery-item-stats{font-size:7px;font-weight:300;color:#999;white-space:nowrap;}
 #compareView{display:none;flex:1;overflow:hidden;flex-direction:column;}
-#compareFilters{background:#fff;border-bottom:1px solid #eee;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-shrink:0;}
+#compareFilters{background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.4);padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-shrink:0;}
 .cf-label{font-size:8px;font-weight:700;letter-spacing:0.3em;color:#999;text-transform:uppercase;}
 .cf-select{font-family:Urbanist,sans-serif;font-size:10px;background:#fff;color:#333;border:1.5px solid #ddd;padding:5px 10px;cursor:pointer;border-radius:100px;outline:none;-webkit-appearance:none;}
 .cf-select:focus{border-color:#555;}
 .cf-sep{width:1px;height:16px;background:#ddd;align-self:center;}
-#compareGrid-wrap{flex:1;overflow:auto;padding:16px;background:#f5f5f5;}
+#compareGrid-wrap{flex:1;overflow:auto;padding:16px;;}
 #compareGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
 .compare-panel{background:#fff;border:1px solid #e0e0e0;overflow:hidden;border-radius:4px;}
 .compare-panel-header{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 10px;border-bottom:1px solid #eee;flex-wrap:wrap;gap:3px;}
@@ -265,7 +319,7 @@ body{
 .cp-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
 .cp-canvas{position:absolute;inset:0;pointer-events:none;}
 .cp-stats{font-size:8px;font-weight:300;color:#999;padding:5px 10px;letter-spacing:0.05em;border-top:1px solid #eee;}
-#nameScreen{display:none;position:fixed;inset:0;z-index:2000;background:#fff;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;padding:40px 20px;}
+#nameScreen{display:none;position:fixed;inset:0;z-index:2000;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;padding:40px 20px;}
 .ns-title{font-size:9px;font-weight:300;letter-spacing:0.55em;color:#bbb;margin-bottom:52px;}
 .ns-form{display:flex;flex-direction:column;align-items:center;width:100%;max-width:320px;}
 .ns-field{width:100%;margin-bottom:30px;}
@@ -275,8 +329,8 @@ body{
 .ns-field input::placeholder{color:#ccc;font-size:14px;}
 .ns-row{display:flex;gap:24px;width:100%;}
 .ns-row .ns-field{flex:1;}
-#dashboardScreen{display:none;position:fixed;inset:0;z-index:1600;background:#f5f5f5;flex-direction:column;overflow:hidden;padding-top:52px;}
-#dashboardHeader{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid #eee;flex-shrink:0;background:#fff;}
+#dashboardScreen{display:none;position:fixed;inset:0;z-index:1600;;flex-direction:column;overflow:hidden;padding-top:52px;}
+#dashboardHeader{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,0.4);flex-shrink:0;background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
 #dashboardHeader .dash-title{font-size:11px;font-weight:700;letter-spacing:0.45em;color:#111;}
 #dashboardBody{flex:1;overflow-y:auto;padding:24px 28px;padding-top:16px;}
 .dash-section{margin-bottom:28px;}
@@ -565,7 +619,7 @@ body{
 </div>
 
 <!-- PROFILE SCREEN -->
-<div id="profileScreen" style="display:none;position:fixed;inset:0;z-index:1600;background:#f5f5f5;flex-direction:column;overflow:hidden;padding-top:52px;">
+<div id="profileScreen" style="display:none;position:fixed;inset:0;z-index:1600;;flex-direction:column;overflow:hidden;padding-top:52px;">
   <div id="profileBody" style="flex:1;overflow-y:auto;padding:32px 40px;"></div>
 </div>
 
