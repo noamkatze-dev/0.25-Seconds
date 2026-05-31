@@ -732,18 +732,9 @@ let appStarted=false;
 let userLoggedIn=false;
 
 function showHome(){
+  hideAllScreens();
   homeScreen.style.display='block';
-  document.getElementById('dataScreen').style.display='none';
-  document.getElementById('galleryScreen').style.display='none';
-  document.getElementById('dashboardScreen').style.display='none';
-  document.getElementById('profileScreen').style.display='none';
-  document.getElementById('aboutScreen').style.display='none';
   navHomeLink.classList.add('active');
-  navSessionLink.classList.remove('active');
-  navGalleryLink.classList.remove('active');
-  navDashboardLink.classList.remove('active');
-  navProfileLink.classList.remove('active');
-  navAboutLink.classList.remove('active');
 }
 function hideHome(){homeScreen.style.display='none';navHomeLink.classList.remove('active');}
 
@@ -753,17 +744,8 @@ document.getElementById('homeStartBtn').addEventListener('click',goToSession);
 document.getElementById('homeStartBtn2').addEventListener('click',goToSession);
 navSessionLink.addEventListener('click',()=>{
   if(appStarted){
-    homeScreen.style.display='none';
-    document.getElementById('galleryScreen').style.display='none';
-    document.getElementById('dashboardScreen').style.display='none';
-    document.getElementById('aboutScreen').style.display='none';
-    document.getElementById('profileScreen').style.display='none';
+    hideAllScreens();
     navSessionLink.classList.add('active');
-    navHomeLink.classList.remove('active');
-    navGalleryLink.classList.remove('active');
-    navDashboardLink.classList.remove('active');
-    navProfileLink.classList.remove('active');
-    navAboutLink.classList.remove('active');
     if(allSessions.length>0){
       document.getElementById('dataScreen').style.display='flex';
     } else {
@@ -992,16 +974,12 @@ document.getElementById('cf-apply').addEventListener('click',renderCompareView);
 document.getElementById('cf-layer').addEventListener('change',renderCompareView);
 
 function openGallery(){
-  homeScreen.style.display='none';
-  document.getElementById('dataScreen').style.display='none';
-  document.getElementById('dashboardScreen').style.display='none';
-  document.getElementById('aboutScreen').style.display='none';
-  document.getElementById('profileScreen').style.display='none';
-  const screen=document.getElementById('galleryScreen');screen.style.display='flex';
-  navGalleryLink.classList.add('active');navHomeLink.classList.remove('active');navSessionLink.classList.remove('active');navDashboardLink.classList.remove('active');navProfileLink.classList.remove('active');navAboutLink.classList.remove('active');
+  hideAllScreens();
+  navGalleryLink.classList.add('active');
   if(allSessions.length===0){
     showEmptyState('galleryScreen','No sessions yet. Complete a session first.');
   } else {
+    document.getElementById('galleryScreen').style.display='flex';
     renderGalleryScreen();
   }
 }
@@ -1068,6 +1046,17 @@ document.getElementById('withImgBtn').addEventListener('click',()=>{showImg=true
 document.getElementById('withoutImgBtn').addEventListener('click',()=>{showImg=false;document.getElementById('withoutImgBtn').classList.add('active');document.getElementById('withImgBtn').classList.remove('active');document.getElementById('dataImg').style.opacity='0';});
 document.querySelectorAll('.layer-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.layer-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');dataActiveLayer=btn.dataset.layer;playLayer(dataActiveLayer);});});
 document.getElementById('playBtn').addEventListener('click',()=>{playLayer(dataActiveLayer||'GAZE');});
+
+function hideAllScreens(){
+  homeScreen.style.display='none';
+  document.getElementById('dataScreen').style.display='none';
+  document.getElementById('galleryScreen').style.display='none';
+  document.getElementById('dashboardScreen').style.display='none';
+  document.getElementById('profileScreen').style.display='none';
+  document.getElementById('aboutScreen').style.display='none';
+  document.getElementById('imgWrapper').style.display='none';
+  [navSessionLink,navGalleryLink,navDashboardLink,navProfileLink,navAboutLink,navHomeLink].forEach(l=>l.classList.remove('active'));
+}
 
 function showAuthNav(){
   document.querySelectorAll('.nav-authenticated').forEach(el=>el.style.display='');
@@ -1172,17 +1161,9 @@ function bootHome(){}
    PROFILE SCREEN
    ══════════════════════════════════════════════════════════════════════ */
 function openProfile(){
-  homeScreen.style.display='none';
-  document.getElementById('dataScreen').style.display='none';
-  document.getElementById('galleryScreen').style.display='none';
-  document.getElementById('dashboardScreen').style.display='none';
-  const scr=document.getElementById('profileScreen');
-  scr.style.display='flex';
+  hideAllScreens();
   navProfileLink.classList.add('active');
-  navHomeLink.classList.remove('active');
-  navSessionLink.classList.remove('active');
-  navGalleryLink.classList.remove('active');
-  navDashboardLink.classList.remove('active');
+  document.getElementById('profileScreen').style.display='flex';
   renderProfile();
 }
 
@@ -1282,18 +1263,9 @@ navProfileLink.addEventListener('click',()=>openProfile());
 navAboutLink.addEventListener('click',()=>openAbout());
 
 function openAbout(){
-  homeScreen.style.display='none';
-  document.getElementById('dataScreen').style.display='none';
-  document.getElementById('galleryScreen').style.display='none';
-  document.getElementById('dashboardScreen').style.display='none';
-  document.getElementById('profileScreen').style.display='none';
-  document.getElementById('aboutScreen').style.display='flex';
+  hideAllScreens();
   navAboutLink.classList.add('active');
-  navHomeLink.classList.remove('active');
-  navSessionLink.classList.remove('active');
-  navGalleryLink.classList.remove('active');
-  navDashboardLink.classList.remove('active');
-  navProfileLink.classList.remove('active');
+  document.getElementById('aboutScreen').style.display='flex';
 }
 
 function showEmptyState(screenId,msg){
@@ -1318,19 +1290,10 @@ function showEmptyState(screenId,msg){
 }
 
 function openDashboard(){
-  homeScreen.style.display='none';
-  document.getElementById('dataScreen').style.display='none';
-  document.getElementById('galleryScreen').style.display='none';
-  document.getElementById('aboutScreen').style.display='none';
-  document.getElementById('profileScreen').style.display='none';
+  hideAllScreens();
+  navDashboardLink.classList.add('active');
   const scr=document.getElementById('dashboardScreen');
   scr.style.display='flex';
-  navDashboardLink.classList.add('active');
-  navHomeLink.classList.remove('active');
-  navSessionLink.classList.remove('active');
-  navGalleryLink.classList.remove('active');
-  navProfileLink.classList.remove('active');
-  navAboutLink.classList.remove('active');
   if(allSessions.length===0){
     showEmptyState('dashboardScreen','Complete a session first to see your dashboard.');
   } else {
