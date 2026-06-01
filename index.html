@@ -126,7 +126,7 @@ body{
 #homeStartBtn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.8);}
 .home-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
 .home-badge{font-size:10px;color:#555;border:1px solid #ddd;padding:5px 14px;border-radius:100px;letter-spacing:0.05em;}
-.home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#FF0003;display:flex;flex-direction:column;align-items:center;gap:6px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.3s;}
+.home-scroll-hint{font-size:9px;font-weight:300;letter-spacing:0.4em;color:#FF0003;display:flex;flex-direction:column;align-items:center;gap:6px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.4s ease;}
 .home-scroll-hint-arrow{font-size:14px;color:#FF0003;}
 
 #homeInfo{position:relative;z-index:4;pointer-events:all;}
@@ -1158,7 +1158,15 @@ document.fonts.ready.then(() => buildModePreviews());
   drawSphere();
 })();
 
-function bootHome(){}
+function bootHome(){
+  const hint=document.getElementById('scrollHint');
+  const hs=document.getElementById('homeScreen');
+  if(hint&&hs){
+    hs.addEventListener('scroll',()=>{
+      hint.style.opacity=hs.scrollTop>10?'0':'1';
+    },{passive:true});
+  }
+}
 
 /* ══════════════════════════════════════════════════════════════════════
    PROFILE SCREEN
