@@ -1113,15 +1113,13 @@ function runImageSession(imgData){
 
 async function runFullSequence(){
   const shuffled=shuffleArray(POLITICAL_IMAGES);
+  document.getElementById('mainNav').style.display='none';
   for(let i=0;i<shuffled.length;i++){
-    // show sky between images (and before first)
     await showSkyVideo();
-    // show image for 12s
     await runImageSession(shuffled[i]);
   }
-  // final sky
   await showSkyVideo();
-  // show data
+  document.getElementById('mainNav').style.display='flex';
   openData(false);
 }
 
