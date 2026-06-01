@@ -471,7 +471,7 @@ body{
 <div id="info">ALLOW CAMERA ACCESS</div>
 <!-- SKY VIDEO OVERLAY -->
 <div id="skyOverlay" style="display:none;position:fixed;inset:0;z-index:200;background:#000;">
-  <video id="skyVideo" src="videos/sky.mp4" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+  <video id="skyVideo" src="sky.mp4" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
   <div id="skyProgress" style="position:absolute;bottom:0;left:0;height:3px;background:#fff;width:0%;transition:none;"></div>
 </div>
 
@@ -1028,11 +1028,11 @@ function openData(pushNew=true){if(pushNew){const snap=captureSession();allSessi
    POLITICAL IMAGES SEQUENCE
    ══════════════════════════════════════════════════════════════════════ */
 const POLITICAL_IMAGES = [
-  { src: 'images/Politics 4.png', name: 'Politics 4' },
-  { src: 'images/Politics 5.png', name: 'Politics 5' },
-  { src: 'images/Politics 7.png', name: 'Politics 7' },
-  { src: 'images/Politics 8.png', name: 'Politics 8' },
-  { src: 'images/Politics 9.png', name: 'Politics 9' },
+  { src: 'Politics 4.png', name: 'Politics 4' },
+  { src: 'Politics 5.png', name: 'Politics 5' },
+  { src: 'Politics 7.png', name: 'Politics 7' },
+  { src: 'Politics 8.png', name: 'Politics 8' },
+  { src: 'Politics 9.png', name: 'Politics 9' },
 ];
 const IMAGE_DURATION = 12000; // 12 seconds
 const SKY_DURATION   = 5000;  // 5 seconds
@@ -1052,6 +1052,7 @@ function showSkyVideo(){
     progress.style.width='0%';
     progress.style.transition='none';
     video.currentTime=0;
+    video.load();
     video.play().catch(()=>{});
     // animate progress bar
     requestAnimationFrame(()=>{
