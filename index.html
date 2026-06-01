@@ -469,7 +469,13 @@ body{
 <div id="sessionInfoOverlay" style="display:none !important;"></div>
 <div id="gazeDot"></div>
 <div id="info">ALLOW CAMERA ACCESS</div>
-<button id="finishBtn">FINISH SESSION</button>
+<!-- SKY VIDEO OVERLAY -->
+<div id="skyOverlay" style="display:none;position:fixed;inset:0;z-index:200;background:#000;">
+  <video id="skyVideo" src="videos/sky.mp4" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+  <div id="skyProgress" style="position:absolute;bottom:0;left:0;height:3px;background:#fff;width:0%;transition:none;"></div>
+</div>
+
+<!-- finishBtn removed - sessions are automatic -->
 
 <div id="calOverlay">
   <canvas id="calCanvas"></canvas>
@@ -1018,9 +1024,119 @@ async function saveProfile(session) {
 
 function openData(pushNew=true){if(pushNew){const snap=captureSession();allSessions.push(snap);viewSession=snap;}const dataScreen=document.getElementById('dataScreen');const dataBody=document.getElementById('dataBody');const compareView=document.getElementById('compareView');dataScreen.style.display='flex';dataBody.style.display='flex';compareView.style.display='none';document.getElementById('sessionViewBtn').classList.add('active');document.getElementById('compareViewBtn').classList.remove('active');document.getElementById('galleryScreen').style.display='none';document.getElementById('dataImg').src=viewSession.imageSrc;document.getElementById('dataImg').style.opacity=showImg?'1':'0';renderDataSessionBadge(viewSession);const activeBtn=document.querySelector('.layer-btn.active');const layer=activeBtn?activeBtn.dataset.layer:'GAZE';dataActiveLayer=layer;playLayer(layer);}
 
-async function boot(){dotCanvas.width=window.innerWidth;dotCanvas.height=window.innerHeight;window.addEventListener('resize',()=>{dotCanvas.width=window.innerWidth;dotCanvas.height=window.innerHeight;});heatCanvas=document.createElement('canvas');heatCanvas.width=W_HEAT;heatCanvas.height=H_HEAT;heatCtx2=heatCanvas.getContext('2d');const ok=await startEyeTracking();if(ok)await runCalibration();else{calOverlay.style.display='none';enablePointerFallback();}showLib();await new Promise(resolve=>{document.getElementById('libBeginBtn').addEventListener('click',()=>{if(!imageLibrary.length)return;if(isImageViewed(currentImageIdx)){const unviewed=imageLibrary.findIndex((_,i)=>!isImageViewed(i));if(unviewed===-1)return;currentImageIdx=unviewed;}markImageViewed(currentImageIdx);document.getElementById('libraryScreen').style.display='none';imgWrapper.style.display='block';mainImg.src=imageLibrary[currentImageIdx].src;resolve();});});sessionStartTs=Date.now();firstFixModeTs=performance.now();document.getElementById('finishBtn').style.display='block';annLayer.style.opacity='0';startSessionInfoOverlay();setInterval(()=>{if(!gazeOn)return;gazeLog.push({t:Date.now()-sessionStartTs,x:sGX,y:sGY});if(gazeLog.length>10000)gazeLog.shift();},100);requestAnimationFrame(mainLoop);}
+/* ══════════════════════════════════════════════════════════════════════
+   POLITICAL IMAGES SEQUENCE
+   ══════════════════════════════════════════════════════════════════════ */
+const POLITICAL_IMAGES = [
+  { src: 'images/Politics 4.png', name: 'Politics 4' },
+  { src: 'images/Politics 5.png', name: 'Politics 5' },
+  { src: 'images/Politics 7.png', name: 'Politics 7' },
+  { src: 'images/Politics 8.png', name: 'Politics 8' },
+  { src: 'images/Politics 9.png', name: 'Politics 9' },
+];
+const IMAGE_DURATION = 12000; // 12 seconds
+const SKY_DURATION   = 5000;  // 5 seconds
 
-document.getElementById('finishBtn').addEventListener('click',()=>{stopSessionInfoOverlay();const snap=captureSession();saveProfile(snap);openData(true);});
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function showSkyVideo(){
+  return new Promise(resolve=>{
+    const overlay=document.getElementById('skyOverlay');
+    const video=document.getElementById('skyVideo');
+    const progress=document.getElementById('skyProgress');
+    overlay.style.display='block';
+    progress.style.width='0%';
+    progress.style.transition='none';
+    video.currentTime=0;
+    video.play().catch(()=>{});
+    // animate progress bar
+    requestAnimationFrame(()=>{
+      progress.style.transition=`width ${SKY_DURATION}ms linear`;
+      progress.style.width='100%';
+    });
+    setTimeout(()=>{
+      video.pause();
+      overlay.style.display='none';
+      progress.style.width='0%';
+      progress.style.transition='none';
+      resolve();
+    }, SKY_DURATION);
+  });
+}
+
+function runImageSession(imgData){
+  return new Promise(resolve=>{
+    // reset session data for this image
+    fixationHistory=[];currentFixation=null;scanPathHistory=[];saccadeHistory=[];
+    saccadeActive=false;saccadeStart=null;gazeLog=[];firstFix=null;firstFixDone=false;
+    heatmap=new Float32Array(W_HEAT*H_HEAT);window._gazeHistory=[];
+
+    // set image
+    imgWrapper.style.display='block';
+    mainImg.src=imgData.src;
+    sessionStartTs=Date.now();
+    firstFixModeTs=performance.now();
+
+    // collect gaze
+    const gazeInterval=setInterval(()=>{
+      if(!gazeOn)return;
+      gazeLog.push({t:Date.now()-sessionStartTs,x:sGX,y:sGY});
+      if(gazeLog.length>10000)gazeLog.shift();
+    },100);
+
+    // auto-advance after 12s
+    setTimeout(()=>{
+      clearInterval(gazeInterval);
+      imgWrapper.style.display='none';
+
+      // save session
+      const snap={
+        user:currentUser||'Unknown',age:currentAge,gender:currentGender,
+        location:userLocation,imageSrc:mainImg.src,imageName:imgData.name,
+        timestamp:Date.now(),sessionDuration:Date.now()-sessionStartTs,
+        gazeLog:gazeLog.slice(),fixationHistory:fixationHistory.slice(),
+        saccadeHistory:saccadeHistory.slice(),scanPathHistory:scanPathHistory.slice(),
+        firstFix,firstFixModeTs,sessionStartTs
+      };
+      allSessions.push(snap);
+      viewSession=snap;
+      saveProfile(snap);
+      resolve();
+    }, IMAGE_DURATION);
+  });
+}
+
+async function runFullSequence(){
+  const shuffled=shuffleArray(POLITICAL_IMAGES);
+  for(let i=0;i<shuffled.length;i++){
+    // show sky between images (and before first)
+    await showSkyVideo();
+    // show image for 12s
+    await runImageSession(shuffled[i]);
+  }
+  // final sky
+  await showSkyVideo();
+  // show data
+  openData(false);
+}
+
+async function boot(){
+  dotCanvas.width=window.innerWidth;dotCanvas.height=window.innerHeight;
+  window.addEventListener('resize',()=>{dotCanvas.width=window.innerWidth;dotCanvas.height=window.innerHeight;});
+  heatCanvas=document.createElement('canvas');heatCanvas.width=W_HEAT;heatCanvas.height=H_HEAT;
+  heatCtx2=heatCanvas.getContext('2d');
+  const ok=await startEyeTracking();
+  if(ok) await runCalibration();
+  else{calOverlay.style.display='none';enablePointerFallback();}
+  requestAnimationFrame(mainLoop);
+  await runFullSequence();
+}
+
+// finishBtn removed - sessions are automatic
 document.getElementById('sessionViewBtn').addEventListener('click',()=>{
   document.getElementById('sessionViewBtn').classList.add('active');
   document.getElementById('compareViewBtn').classList.remove('active');
