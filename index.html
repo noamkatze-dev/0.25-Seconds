@@ -1312,22 +1312,21 @@ function bootHome(){
   let targetTime=0, currentSkyTime=0;
   let lastX=0.5;
   let skyLoopRunning=false;
+  let lastSkyUpdate=0;
 
-  function updateSkyVideo(){
+  function updateSkyVideo(ts){
     let x;
     if(gazeOn) x = sGX;
     else if(eyeValid) x = curEyeOffX;
     else x = lastX;
-    targetTime = x * (skyVideo.duration || 5);
-    currentSkyTime += (targetTime - currentSkyTime) * 0.04;
-    if(skyVideo.duration && !isNaN(currentSkyTime)){
-      skyVideo.currentTime = Math.max(0, Math.min(skyVideo.duration, currentSkyTime));
+    targetTime = x * (skyVideo.duration || 13);
+    currentSkyTime += (targetTime - currentSkyTime) * 0.08;
+    // only update currentTime every 80ms to avoid browser throttling
+    if(ts - lastSkyUpdate > 80 && skyVideo.duration && !isNaN(currentSkyTime)){
+      skyVideo.currentTime = Math.max(0, Math.min(skyVideo.duration - 0.01, currentSkyTime));
+      lastSkyUpdate = ts;
     }
-    if(document.getElementById('homeSkyVideo')){
-      requestAnimationFrame(updateSkyVideo);
-    } else {
-      skyLoopRunning = false;
-    }
+    requestAnimationFrame(updateSkyVideo);
   }
 
   function startSkyLoop(){
