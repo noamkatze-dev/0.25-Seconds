@@ -1208,6 +1208,9 @@ function bootHome(){
     },{passive:true});
   }
 
+  // Start eye tracking immediately for sky video
+  startEyeTracking();
+
   // Sky video scrubbing with eye position only
   const skyVideo=document.getElementById('homeSkyVideo');
   if(!skyVideo) return;
