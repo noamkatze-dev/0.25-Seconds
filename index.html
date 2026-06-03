@@ -42,11 +42,11 @@ body{
 .home-content{position:relative;z-index:1;}
 #mainNav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:9000;cursor:default;}
 #navBrand{display:flex;align-items:center;gap:10px;}
-.nav-va{font-size:14px;font-weight:700;color:#111;letter-spacing:0.06em;}
+.nav-va{font-size:14px;font-weight:700;color:#fff;letter-spacing:0.06em;}
 .nav-title{font-size:10px;font-weight:700;letter-spacing:0.28em;color:#111;font-variant:small-caps;}
 #navLinks{display:flex;gap:28px;align-items:center;}
-.nav-link{font-size:10px;font-weight:700;letter-spacing:0.22em;color:#999;cursor:pointer;user-select:none;transition:color 0.15s;}
-.nav-link:hover,.nav-link.active{color:#111;}
+.nav-link{font-size:10px;font-weight:700;letter-spacing:0.22em;color:rgba(255,255,255,0.7);cursor:pointer;user-select:none;transition:color 0.15s;}
+.nav-link:hover,.nav-link.active{color:#fff;}
 .nav-login{font-size:10px;font-weight:700;letter-spacing:0.22em;cursor:pointer;user-select:none;background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.6);color:#111;padding:6px 18px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background 0.15s;}
 .nav-login:hover{background:rgba(255,255,255,0.55);}
 .nav-login.hidden{display:none;}
@@ -377,7 +377,7 @@ body{
 
 <nav id="mainNav">
   <div id="navBrand" style="cursor:pointer;" id="navBrandLink">
-    <span class="nav-va">0.25 SECONDS</span>
+    <span class="nav-va">250ms</span>
   </div>
   <div id="navLinks">
     <span class="nav-link nav-authenticated" id="navSessionLink" style="display:none;">DATA</span>
