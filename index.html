@@ -1211,21 +1211,19 @@ function bootHome(){
   // Start eye tracking immediately for sky video
   startEyeTracking();
 
-  // Sky video scrubbing with eye position only
+  // Sky video scrubbing with mouse
   const skyVideo=document.getElementById('homeSkyVideo');
   if(!skyVideo) return;
 
   skyVideo.pause();
 
   let targetTime=0, currentSkyTime=0;
+  let lastX=0.5;
   let skyLoopRunning=false;
   let lastSkyUpdate=0;
 
   function updateSkyVideo(ts){
-    let x = 0.5;
-    if(gazeOn) x = sGX;
-    else if(eyeValid) x = curEyeOffX;
-    targetTime = x * (skyVideo.duration || 5);
+    targetTime = lastX * (skyVideo.duration || 5);
     currentSkyTime += (targetTime - currentSkyTime) * 0.06;
     if(ts - lastSkyUpdate > 80 && skyVideo.duration && !isNaN(currentSkyTime)){
       skyVideo.currentTime = Math.max(0, Math.min(skyVideo.duration - 0.01, currentSkyTime));
@@ -1244,6 +1242,10 @@ function bootHome(){
   skyVideo.addEventListener('loadedmetadata', startSkyLoop);
   if(skyVideo.readyState >= 1) startSkyLoop();
   setTimeout(startSkyLoop, 500);
+
+  document.addEventListener('mousemove', e=>{
+    lastX = e.clientX / window.innerWidth;
+  });
 }
 
 /* ══════════════════════════════════════════════════════════════════════
