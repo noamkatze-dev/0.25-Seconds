@@ -1208,25 +1208,22 @@ function bootHome(){
     },{passive:true});
   }
 
-  // Sky video scrubbing with eye/mouse position
+  // Sky video scrubbing with eye position only
   const skyVideo=document.getElementById('homeSkyVideo');
   if(!skyVideo) return;
 
   skyVideo.pause();
 
   let targetTime=0, currentSkyTime=0;
-  let lastX=0.5;
   let skyLoopRunning=false;
   let lastSkyUpdate=0;
 
   function updateSkyVideo(ts){
-    let x;
+    let x = 0.5;
     if(gazeOn) x = sGX;
     else if(eyeValid) x = curEyeOffX;
-    else x = lastX;
-    targetTime = x * (skyVideo.duration || 13);
-    currentSkyTime += (targetTime - currentSkyTime) * 0.08;
-    // only update currentTime every 80ms to avoid browser throttling
+    targetTime = x * (skyVideo.duration || 5);
+    currentSkyTime += (targetTime - currentSkyTime) * 0.06;
     if(ts - lastSkyUpdate > 80 && skyVideo.duration && !isNaN(currentSkyTime)){
       skyVideo.currentTime = Math.max(0, Math.min(skyVideo.duration - 0.01, currentSkyTime));
       lastSkyUpdate = ts;
@@ -1242,15 +1239,8 @@ function bootHome(){
   }
 
   skyVideo.addEventListener('loadedmetadata', startSkyLoop);
-  // Start immediately if already loaded
   if(skyVideo.readyState >= 1) startSkyLoop();
-  // Force start after short delay as fallback
   setTimeout(startSkyLoop, 500);
-
-  // Mouse fallback
-  document.addEventListener('mousemove', e=>{
-    lastX = e.clientX / window.innerWidth;
-  });
 }
 
 /* ══════════════════════════════════════════════════════════════════════
