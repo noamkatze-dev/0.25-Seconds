@@ -388,6 +388,7 @@ body{
     <span class="nav-link nav-authenticated" id="navProfileLink" style="display:none;">PROFILE</span>
     <span class="nav-link" id="navAboutLink">ABOUT</span>
     <span class="nav-login" id="navLoginBtn">SIGN IN</span>
+    <button id="langToggle" onclick="toggleLang()" style="background:none;border:none;font-family:Urbanist,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px 8px;transition:color 0.15s;">EN</button>
   </div>
 </nav>
 
@@ -1431,6 +1432,154 @@ function renderDashboard(){
 function makeRingChart(metrics){const wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:16px;flex-wrap:wrap;';const dpr=window.devicePixelRatio||1;const SIZE=120;metrics.forEach(m=>{const cell=document.createElement('div');cell.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;background:#fff;border:1px solid #eee;border-radius:8px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04);';const canvas=document.createElement('canvas');canvas.width=SIZE*dpr;canvas.height=SIZE*dpr;canvas.style.width=SIZE+'px';canvas.style.height=SIZE+'px';const label=document.createElement('div');label.style.cssText='font-size:8px;font-weight:700;letter-spacing:0.3em;color:#bbb;font-family:Urbanist,sans-serif;text-transform:uppercase;';label.textContent=m.label;cell.appendChild(canvas);cell.appendChild(label);wrap.appendChild(cell);setTimeout(()=>{const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);const cx=SIZE/2,cy=SIZE/2,outerR=SIZE/2-8;const pct=Math.min(1,m.val/m.max);const startA=-Math.PI/2;ctx.beginPath();ctx.arc(cx,cy,outerR,0,Math.PI*2);ctx.strokeStyle='#f0f0f0';ctx.lineWidth=14;ctx.stroke();if(pct>0){ctx.beginPath();ctx.arc(cx,cy,outerR,startA,startA+pct*Math.PI*2);ctx.strokeStyle='#FF0003';ctx.lineWidth=14;ctx.lineCap='round';ctx.stroke();}ctx.fillStyle='#111';ctx.font='700 22px Urbanist';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(m.val,cx,cy-6);ctx.fillStyle='#ccc';ctx.font='300 9px Urbanist';ctx.fillText('/ '+m.max,cx,cy+12);},60);});return wrap;}
 
 function makeBarChart(title,data,unit=''){const wrap=document.createElement('div');wrap.className='dash-chart-area';const dpr=window.devicePixelRatio||1;const PAD_L=100,PAD_R=60,PAD_T=28,PAD_B=8;const rowH=28,barH=12;const H_canvas=PAD_T+data.length*rowH+PAD_B;const canvas=document.createElement('canvas');canvas.style.width='100%';canvas.style.height=H_canvas+'px';canvas.style.display='block';wrap.appendChild(canvas);setTimeout(()=>{const W2=canvas.offsetWidth||600;canvas.width=W2*dpr;canvas.height=H_canvas*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);const maxVal=Math.max(...data.map(d=>d.val),1);const barZone=W2-PAD_L-PAD_R;ctx.font='700 8px Urbanist';ctx.fillStyle='rgba(0,0,0,0.25)';ctx.textAlign='left';ctx.fillText(title.toUpperCase(),PAD_L,14);for(let g=0;g<=4;g++){const x=PAD_L+barZone*g/4;ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,PAD_T);ctx.lineTo(x,H_canvas-PAD_B);ctx.stroke();}data.forEach((d,i)=>{const y=PAD_T+i*rowH;const barW=barZone*d.val/maxVal;ctx.font='300 9px Urbanist';ctx.fillStyle='rgba(0,0,0,0.45)';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(d.label,PAD_L-10,y+barH/2);ctx.fillStyle='#f0f0f0';ctx.beginPath();const r=barH/2;ctx.roundRect(PAD_L,y,barZone,barH,r);ctx.fill();if(barW>0){ctx.fillStyle='#FF0003';ctx.beginPath();ctx.roundRect(PAD_L,y,barW,barH,r);ctx.fill();}ctx.font='700 9px Urbanist';ctx.fillStyle='rgba(0,0,0,0.4)';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(d.val+(unit?' '+unit:''),PAD_L+barW+8,y+barH/2);});},60);return wrap;}
+
+/* ══════════════════════════════════════════════════════════════════════
+   i18n — Language Toggle
+   ══════════════════════════════════════════════════════════════════════ */
+const TRANSLATIONS = {
+  en: {
+    navData:'DATA', navGallery:'GALLERY', navDashboard:'DASHBOARD',
+    navProfile:'PROFILE', navAbout:'ABOUT', navLogin:'SIGN IN',
+    eyebrow:'VISUAL ANALYSIS SYSTEM', heading:'YOU SEE, WE MEASURE.',
+    startBtn:'START', scrollHint:'SCROLL TO LEARN MORE',
+    howItWorks:'HOW IT WORKS', analysisModes:'ANALYSIS MODES',
+    quickStart:'QUICK START', ready:'READY?',
+    howTitle:'From eyes to insights in three steps.',
+    modesTitle:'Six ways to read visual attention.',
+    startTitle:'Up and running in under a minute.',
+    readyTitle:'Start your session now.',
+    startSession:'START SESSION',
+    nameLabel:'FULL NAME', namePlaceholder:'Your name',
+    ageLabel:'AGE', genderLabel:'GENDER',
+    male:'Male', female:'Female', other:'Other',
+    continueBtn:'CONTINUE',
+    calTitle:'EYE TRACKING CALIBRATION',
+    calInstr1:'Keep your head still - move only your eyes to each dot',
+    calInstr2:'Hold your gaze until the ring fills completely',
+    calAfter1:'After calibration, you will see 5 political images, one at a time.',
+    calAfter2:'Look naturally - there are no right or wrong answers.',
+    calAfter3:'Each image will appear for 12 seconds.',
+    calBegin:'BEGIN CALIBRATION',
+    calReady:'READY',
+    calDone:'Calibration complete - the session is about to begin.',
+    noSessions:'NO SESSIONS YET',
+    noSessionsData:'Start your first session to see your data.',
+    noSessionsGallery:'Start your first session to see your gallery.',
+    noSessionsDash:'Start your first session to see your dashboard.',
+    startSessionBtn:'START SESSION',
+    aboutTitle:'ABOUT', theSystem:'THE SYSTEM', researchFocus:'RESEARCH FOCUS',
+    whatWeMeasure:'WHAT WE MEASURE', builtBy:'BUILT BY',
+  },
+  he: {
+    navData:'נתונים', navGallery:'גלריה', navDashboard:'לוח בקרה',
+    navProfile:'פרופיל', navAbout:'אודות', navLogin:'כניסה',
+    eyebrow:'מערכת ניתוח חזותי', heading:'אתה מביט, אנחנו מודדים.',
+    startBtn:'התחל', scrollHint:'גלול למידע נוסף',
+    howItWorks:'איך זה עובד', analysisModes:'מצבי ניתוח',
+    quickStart:'התחלה מהירה', ready:'מוכן?',
+    howTitle:'משלושה שלבים לתובנות.',
+    modesTitle:'שש דרכים לקרוא תשומת לב חזותית.',
+    startTitle:'פעיל ועובד בפחות מדקה.',
+    readyTitle:'התחל את הסשן שלך עכשיו.',
+    startSession:'התחל סשן',
+    nameLabel:'שם מלא', namePlaceholder:'שמך',
+    ageLabel:'גיל', genderLabel:'מגדר',
+    male:'זכר', female:'נקבה', other:'אחר',
+    continueBtn:'המשך',
+    calTitle:'כיול מעקב עיניים',
+    calInstr1:'שמור על ראשך ללא תנועה - הזז רק את עינייך לכל נקודה',
+    calInstr2:'החזק את המבט עד שהטבעת תתמלא לחלוטין',
+    calAfter1:'לאחר הכיול תראה 5 תמונות פוליטיות, אחת בכל פעם.',
+    calAfter2:'הסתכל באופן טבעי - אין תשובות נכונות או שגויות.',
+    calAfter3:'כל תמונה תופיע למשך 12 שניות.',
+    calBegin:'התחל כיול',
+    calReady:'מוכן',
+    calDone:'הכיול הושלם - הסשן עומד להתחיל.',
+    noSessions:'עדיין אין סשנים',
+    noSessionsData:'התחל את הסשן הראשון שלך כדי לראות את הנתונים.',
+    noSessionsGallery:'התחל את הסשן הראשון שלך כדי לראות את הגלריה.',
+    noSessionsDash:'התחל את הסשן הראשון שלך כדי לראות את לוח הבקרה.',
+    startSessionBtn:'התחל סשן',
+    aboutTitle:'אודות', theSystem:'המערכת', researchFocus:'מוקד המחקר',
+    whatWeMeasure:'מה אנחנו מודדים', builtBy:'נבנה על ידי',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'en';
+
+function applyLang(lang){
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  const t = TRANSLATIONS[lang];
+  const isHe = lang === 'he';
+  
+  document.documentElement.setAttribute('lang', lang);
+  document.getElementById('langToggle').textContent = isHe ? 'EN' : 'HE';
+  document.body.style.direction = isHe ? 'rtl' : 'ltr';
+
+  // Nav
+  const navSession = document.getElementById('navSessionLink');
+  if(navSession) navSession.textContent = t.navData;
+  const navGal = document.getElementById('navGalleryLink');
+  if(navGal) navGal.textContent = t.navGallery;
+  const navDash = document.getElementById('navDashboardLink');
+  if(navDash) navDash.textContent = t.navDashboard;
+  const navProf = document.getElementById('navProfileLink');
+  if(navProf) navProf.textContent = t.navProfile;
+  const navAbt = document.getElementById('navAboutLink');
+  if(navAbt) navAbt.textContent = t.navAbout;
+  const navLog = document.getElementById('navLoginBtn');
+  if(navLog) navLog.textContent = t.navLogin;
+
+  // Home hero
+  const eyebrow = document.querySelector('.home-eyebrow');
+  if(eyebrow) eyebrow.textContent = t.eyebrow;
+  const heading = document.querySelector('.home-heading');
+  if(heading) heading.textContent = t.heading;
+  const startBtn = document.getElementById('homeStartBtn');
+  if(startBtn) startBtn.textContent = t.startBtn;
+  const scrollHint = document.getElementById('scrollHint');
+  if(scrollHint) scrollHint.childNodes[0].textContent = t.scrollHint + ' ';
+
+  // Name screen
+  const nameLabel = document.querySelector('label[for="nameInput"]');
+  if(nameLabel) nameLabel.textContent = t.nameLabel;
+  const nameInput = document.getElementById('nameInput');
+  if(nameInput) nameInput.placeholder = t.namePlaceholder;
+  const ageLabel = document.querySelector('label[for="ageInput"]');
+  if(ageLabel) ageLabel.textContent = t.ageLabel;
+  const genderLabel = document.querySelector('label[for="genderInput"]');
+  if(genderLabel) genderLabel.textContent = t.genderLabel;
+  const continueBtn = document.getElementById('nameContinue');
+  if(continueBtn) continueBtn.textContent = t.continueBtn;
+  const genderSel = document.getElementById('genderInput');
+  if(genderSel && genderSel.options.length >= 3){
+    genderSel.options[1].text = t.male;
+    genderSel.options[2].text = t.female;
+    genderSel.options[3] && (genderSel.options[3].text = t.other);
+  }
+
+  // Calibration canvas text is drawn dynamically — store lang for drawCalIntro/drawCalDone
+  // Home sections labels
+  document.querySelectorAll('.hi-label').forEach((el, i) => {
+    const labels = [t.howItWorks, t.analysisModes, t.quickStart, t.ready];
+    if(labels[i]) el.textContent = labels[i];
+  });
+  document.querySelectorAll('.hi-title').forEach((el, i) => {
+    const titles = [t.howTitle, t.modesTitle, t.startTitle, t.readyTitle];
+    if(titles[i]) el.textContent = titles[i];
+  });
+  const startBtn2 = document.getElementById('homeStartBtn2');
+  if(startBtn2) startBtn2.textContent = t.startSession;
+}
+
+function toggleLang(){
+  applyLang(currentLang === 'en' ? 'he' : 'en');
+}
+
+// Apply on load
+applyLang(currentLang);
+
 </script>
 </body>
 </html>
