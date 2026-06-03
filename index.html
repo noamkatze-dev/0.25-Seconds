@@ -1182,7 +1182,14 @@ function showAuthNav(){
 }
 
 
-async function startApp(){await showNameScreen();showAuthNav();userLoggedIn=true;await boot();}
+async function startApp(){
+  hideHome();
+  await showNameScreen();
+  showAuthNav();
+  userLoggedIn=true;
+  hideHome();
+  await boot();
+}
 bootHome();
 document.fonts.ready.then(() => buildModePreviews());
 
