@@ -212,7 +212,7 @@ body{
 }
 #calOverlay{position:fixed;inset:0;z-index:1000;}
 #calCanvas{position:absolute;inset:0;width:100%;height:100%;background:transparent;}
-#calStartBtn{position:absolute;top:58%;left:50%;transform:translateX(-50%);display:none;z-index:1001;}
+#calStartBtn{position:absolute;top:63%;left:50%;transform:translateX(-50%);display:none;z-index:1001;}
 .screen{display:none;position:fixed;inset:0;z-index:1100;flex-direction:column;align-items:center;justify-content:center;}
 .screen-title{font-size:9px;font-weight:300;letter-spacing:0.6em;color:#bbb;margin-bottom:36px;}
 .lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:720px;width:90vw;margin-bottom:36px;max-height:52vh;overflow-y:auto;}
@@ -404,17 +404,21 @@ body{
 
   <div id="homeHeroSection">
 
-    <div id="heroLeft">
+    <!-- Sky video background -->
+    <video id="homeSkyVideo" src="sky.mp4" muted playsinline loop preload="auto"
+      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.7;pointer-events:none;"></video>
+
+    <div id="heroLeft" style="position:relative;z-index:2;">
       <canvas id="fibCanvas"></canvas>
     </div>
 
-    <div id="heroRight">
+    <div id="heroRight" style="position:relative;z-index:2;">
       <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
       <h1 class="home-heading">YOU SEE,<br>WE MEASURE.</h1>
       <button id="homeStartBtn">START</button>
     </div>
 
-    <div class="home-scroll-hint" id="scrollHint">
+    <div class="home-scroll-hint" id="scrollHint" style="z-index:3;">
       SCROLL TO LEARN MORE
       <span class="home-scroll-hint-arrow">&#8595;</span>
     </div>
@@ -857,11 +861,11 @@ function drawCalIntro(){const W=window.innerWidth,H=window.innerHeight;
   calCtx.moveTo(W/2-200,H/2+4);
   calCtx.lineTo(W/2+200,H/2+4);
   calCtx.stroke();
-  calCtx.fillStyle='#888';
+  calCtx.fillStyle='#111';
   calCtx.font='300 13px Urbanist';
   calCtx.fillText('After calibration, you will see 5 political images, one at a time.',W/2,H/2+26);
   calCtx.fillText('Look naturally - there are no right or wrong answers.',W/2,H/2+48);
-  calCtx.fillStyle='#bbb';
+  calCtx.fillStyle='#555';
   calCtx.font='300 11px Urbanist';
   calCtx.fillText('Each image will appear for 12 seconds.',W/2,H/2+70);
 }
@@ -1298,6 +1302,48 @@ function bootHome(){
       hint.style.opacity=hs.scrollTop>10?'0':'1';
     },{passive:true});
   }
+
+  // Sky video scrubbing with eye/mouse position
+  const skyVideo=document.getElementById('homeSkyVideo');
+  if(!skyVideo) return;
+
+  // Pause video — we control time manually
+  skyVideo.addEventListener('loadedmetadata',()=>{
+    skyVideo.pause();
+    skyVideo.currentTime=0;
+  });
+
+  let targetTime=0, currentSkyTime=0;
+  let lastX=0.5;
+
+  function updateSkyVideo(){
+    // Use calibrated gaze if available, raw eye if not, mouse as fallback
+    let x;
+    if(gazeOn) x = sGX;
+    else if(eyeValid) x = curEyeOffX;
+    else x = lastX;
+    targetTime = x * (skyVideo.duration || 5);
+    currentSkyTime += (targetTime - currentSkyTime) * 0.04;
+    if(skyVideo.duration && !isNaN(currentSkyTime)){
+      skyVideo.currentTime = Math.max(0, Math.min(skyVideo.duration, currentSkyTime));
+    }
+    if(homeScreen.style.display !== 'none'){
+      requestAnimationFrame(updateSkyVideo);
+    }
+  }
+
+  skyVideo.addEventListener('loadedmetadata', ()=>{
+    requestAnimationFrame(updateSkyVideo);
+  });
+
+  // Mouse fallback
+  document.addEventListener('mousemove', e=>{
+    lastX = e.clientX / window.innerWidth;
+  });
+
+  // Restart loop when home is shown
+  const origShowHome = showHome;
+  window._skyLoopStarted = false;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
