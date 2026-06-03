@@ -864,6 +864,13 @@ function drawCalDone(){const W=window.innerWidth,H=window.innerHeight;
   calCtx.fillText('SYNCHRONIZED',W/2,H/2-8);
   calCtx.fillStyle='#aaa';calCtx.font='300 13px Urbanist';
   calCtx.fillText('Calibration complete',W/2,H/2+20);
+  calCtx.strokeStyle='rgba(178,224,243,0.5)';calCtx.lineWidth=1;
+  calCtx.beginPath();calCtx.moveTo(W/2-160,H/2+40);calCtx.lineTo(W/2+160,H/2+40);calCtx.stroke();
+  calCtx.fillStyle='#888';calCtx.font='300 13px Urbanist';
+  calCtx.fillText('You will now see 5 political images, one at a time.',W/2,H/2+62);
+  calCtx.fillText('Look naturally - there are no right or wrong answers.',W/2,H/2+84);
+  calCtx.fillStyle='#bbb';calCtx.font='300 11px Urbanist';
+  calCtx.fillText('Each image will appear for 12 seconds.',W/2,H/2+108);
 }
 function awaitDot(px,py,index){return new Promise(resolve=>{let progress=0,prevTs=null;const samples=[];function frame(ts){const dt=prevTs?Math.min((ts-prevTs)/1000,0.05):0;prevTs=ts;const s=eyeStab();progress+=s*CAL_FILL_RATE*dt;progress-=(1-s)*CAL_DRAIN_RATE*dt;progress=Math.max(0,Math.min(1,progress));if(s>0.45&&eyeValid)samples.push({ox:curEyeOffX,oy:curEyeOffY});const W=window.innerWidth,H=window.innerHeight;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
@@ -1115,10 +1122,11 @@ async function runFullSequence(){
   const shuffled=shuffleArray(POLITICAL_IMAGES);
   document.getElementById('mainNav').style.display='none';
   for(let i=0;i<shuffled.length;i++){
-    await showSkyVideo();
+    // show image first
     await runImageSession(shuffled[i]);
+    // sky between images (not after last)
+    if(i<shuffled.length-1) await showSkyVideo();
   }
-  await showSkyVideo();
   document.getElementById('mainNav').style.display='flex';
   openData(false);
 }
