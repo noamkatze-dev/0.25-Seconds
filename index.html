@@ -1204,6 +1204,21 @@ function bootHome(){
   if(hint&&hs){
     hs.addEventListener('scroll',()=>{
       hint.style.opacity=hs.scrollTop>10?'0':'1';
+      // adaptive navbar
+      const heroH = document.getElementById('homeHeroSection').offsetHeight;
+      const dark = hs.scrollTop < heroH - 10;
+      document.querySelectorAll('.nav-link').forEach(el=>{
+        el.style.color = dark ? '' : '#5783B6';
+      });
+      const va = document.querySelector('.nav-va');
+      if(va) va.style.color = dark ? '#fff' : '#5783B6';
+      const nav = document.getElementById('mainNav');
+      if(nav) nav.style.borderBottomColor = dark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.06)';
+      const login = document.getElementById('navLoginBtn');
+      if(login){
+        login.style.color = dark ? '#111' : '#5783B6';
+        login.style.borderColor = dark ? 'rgba(255,255,255,0.6)' : 'rgba(87,131,182,0.4)';
+      }
     },{passive:true});
   }
 
