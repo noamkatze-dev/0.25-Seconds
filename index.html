@@ -838,39 +838,43 @@ function drawCalIntro(){const W=window.innerWidth,H=window.innerHeight;
   calCtx.textAlign='center';
   calCtx.fillStyle='#aaa';
   calCtx.font='700 11px Urbanist';
-  calCtx.fillText('VISUAL ANALYSIS SYSTEM',W/2,H/2-110);
+  calCtx.fillText('VISUAL ANALYSIS SYSTEM',W/2,H/2-130);
   calCtx.fillStyle='#111';
   calCtx.font='700 28px Urbanist';
-  calCtx.fillText('EYE TRACKING CALIBRATION',W/2,H/2-68);
+  calCtx.fillText('EYE TRACKING CALIBRATION',W/2,H/2-90);
   calCtx.strokeStyle='rgba(178,224,243,0.5)';
   calCtx.lineWidth=1;
   calCtx.beginPath();
-  calCtx.moveTo(W/2-200,H/2-46);
-  calCtx.lineTo(W/2+200,H/2-46);
+  calCtx.moveTo(W/2-200,H/2-68);
+  calCtx.lineTo(W/2+200,H/2-68);
   calCtx.stroke();
   calCtx.fillStyle='#111';
   calCtx.font='300 14px Urbanist';
-  calCtx.fillText('Keep your head still - move only your eyes to each dot',W/2,H/2-20);
-  calCtx.fillText('Hold your gaze until the ring fills completely',W/2,H/2+6);
+  calCtx.fillText('Keep your head still - move only your eyes to each dot',W/2,H/2-42);
+  calCtx.fillText('Hold your gaze until the ring fills completely',W/2,H/2-18);
+  calCtx.strokeStyle='rgba(178,224,243,0.3)';
+  calCtx.beginPath();
+  calCtx.moveTo(W/2-200,H/2+4);
+  calCtx.lineTo(W/2+200,H/2+4);
+  calCtx.stroke();
+  calCtx.fillStyle='#888';
+  calCtx.font='300 13px Urbanist';
+  calCtx.fillText('After calibration, you will see 5 political images, one at a time.',W/2,H/2+26);
+  calCtx.fillText('Look naturally - there are no right or wrong answers.',W/2,H/2+48);
+  calCtx.fillStyle='#bbb';
+  calCtx.font='300 11px Urbanist';
+  calCtx.fillText('Each image will appear for 12 seconds.',W/2,H/2+70);
 }
 function drawCalDone(){const W=window.innerWidth,H=window.innerHeight;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
-  grad.addColorStop(0,'rgba(178,224,243,0.7)');
-  grad.addColorStop(1,'rgba(237,247,253,1)');
-  calCtx.fillStyle='#edf7fd';calCtx.fillRect(0,0,W,H);
+  grad.addColorStop(0,"rgba(178,224,243,0.7)");grad.addColorStop(1,"rgba(237,247,253,1)");
+  calCtx.fillStyle="#edf7fd";calCtx.fillRect(0,0,W,H);
   calCtx.fillStyle=grad;calCtx.fillRect(0,0,W,H);
-  calCtx.textAlign='center';
-  calCtx.fillStyle='#111';calCtx.font='700 28px Urbanist';
-  calCtx.fillText('SYNCHRONIZED',W/2,H/2-8);
-  calCtx.fillStyle='#aaa';calCtx.font='300 13px Urbanist';
-  calCtx.fillText('Calibration complete',W/2,H/2+20);
-  calCtx.strokeStyle='rgba(178,224,243,0.5)';calCtx.lineWidth=1;
-  calCtx.beginPath();calCtx.moveTo(W/2-160,H/2+40);calCtx.lineTo(W/2+160,H/2+40);calCtx.stroke();
-  calCtx.fillStyle='#888';calCtx.font='300 13px Urbanist';
-  calCtx.fillText('You will now see 5 political images, one at a time.',W/2,H/2+62);
-  calCtx.fillText('Look naturally - there are no right or wrong answers.',W/2,H/2+84);
-  calCtx.fillStyle='#bbb';calCtx.font='300 11px Urbanist';
-  calCtx.fillText('Each image will appear for 12 seconds.',W/2,H/2+108);
+  calCtx.textAlign="center";
+  calCtx.fillStyle="#111";calCtx.font="700 28px Urbanist";
+  calCtx.fillText("READY",W/2,H/2-8);
+  calCtx.fillStyle="#aaa";calCtx.font="300 13px Urbanist";
+  calCtx.fillText("Calibration complete - the session is about to begin.",W/2,H/2+20);
 }
 function awaitDot(px,py,index){return new Promise(resolve=>{let progress=0,prevTs=null;const samples=[];function frame(ts){const dt=prevTs?Math.min((ts-prevTs)/1000,0.05):0;prevTs=ts;const s=eyeStab();progress+=s*CAL_FILL_RATE*dt;progress-=(1-s)*CAL_DRAIN_RATE*dt;progress=Math.max(0,Math.min(1,progress));if(s>0.45&&eyeValid)samples.push({ox:curEyeOffX,oy:curEyeOffY});const W=window.innerWidth,H=window.innerHeight;
   const grad=calCtx.createRadialGradient(W*0.15,H*0.08,0,W*0.15,H*0.08,W*0.7);
@@ -1122,13 +1126,11 @@ async function runFullSequence(){
   const shuffled=shuffleArray(POLITICAL_IMAGES);
   document.getElementById('mainNav').style.display='none';
   for(let i=0;i<shuffled.length;i++){
-    // show image first
     await runImageSession(shuffled[i]);
-    // sky between images (not after last)
     if(i<shuffled.length-1) await showSkyVideo();
   }
   document.getElementById('mainNav').style.display='flex';
-  openData(false);
+  openGallery();
 }
 
 async function boot(){
