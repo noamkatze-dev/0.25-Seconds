@@ -1323,7 +1323,7 @@ function bootHome(){
     if(skyVideo.duration && !isNaN(currentSkyTime)){
       skyVideo.currentTime = Math.max(0, Math.min(skyVideo.duration, currentSkyTime));
     }
-    if(homeScreen.style.display !== 'none'){
+    if(document.getElementById('homeSkyVideo')){
       requestAnimationFrame(updateSkyVideo);
     } else {
       skyLoopRunning = false;
@@ -1340,6 +1340,8 @@ function bootHome(){
   skyVideo.addEventListener('loadedmetadata', startSkyLoop);
   // Start immediately if already loaded
   if(skyVideo.readyState >= 1) startSkyLoop();
+  // Force start after short delay as fallback
+  setTimeout(startSkyLoop, 500);
 
   // Mouse fallback
   document.addEventListener('mousemove', e=>{
