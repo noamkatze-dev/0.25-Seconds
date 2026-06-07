@@ -1017,29 +1017,71 @@ function renderGalleryScreen(){const body=document.getElementById('galleryBody')
 function captureSession(){return{user:currentUser||'Unknown',age:currentAge,gender:currentGender,location:userLocation,imageSrc:mainImg.src,imageName:imageLibrary[currentImageIdx]?.name||'image',timestamp:Date.now(),sessionDuration:sessionStartTs?Date.now()-sessionStartTs:0,gazeLog:gazeLog.slice(),fixationHistory:fixationHistory.slice(),saccadeHistory:saccadeHistory.slice(),scanPathHistory:scanPathHistory.slice(),firstFix,firstFixModeTs,sessionStartTs};}
 
 /* ══════════════════════════════════════════════════════════════════════
-   profile — save & load
+   profile — save & load (Supabase)
    ══════════════════════════════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://idtghubjdrpcayyarzdr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkdGdodWJqZHJwY2F5eWFyemRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTE4MjIsImV4cCI6MjA5NjM2NzgyMn0.8hIgJUT1aQ3OvgpcRRAEOeHw7uvLUJn-rzw3PjJS9BY';
+
+async function sbFetch(path, options={}) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(options.headers||{})
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
 let currentProfile = null;
 
 async function loadProfile(name) {
   try {
-    const r = await fetch(`/api/profile/${encodeURIComponent(name)}`);
-    if (!r.ok) return null;
-    return await r.json();
-  } catch (_) { return null; }
+    const rows = await sbFetch(`profiles?name=eq.${encodeURIComponent(name)}&select=*`);
+    if (!rows || rows.length === 0) return null;
+    const profile = rows[0];
+    // load sessions for this user
+    const sessions = await sbFetch(`sessions?user_name=eq.${encodeURIComponent(name)}&select=*&order=created_at.asc`);
+    profile.sessions = sessions || [];
+    return profile;
+  } catch (e) { console.warn('[profile:load]', e); return null; }
 }
 
 async function saveProfile(session) {
   try {
-    await fetch('/api/profile', {
+    // upsert profile
+    await sbFetch('profiles?on_conflict=name', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({
-        name:     currentUser,
-        age:      currentAge,
-        gender:   currentGender,
-        location: userLocation,
-        session
+        name: currentUser,
+        age: currentAge,
+        gender: currentGender,
+        location: userLocation
+      })
+    });
+    // insert session
+    await sbFetch('sessions', {
+      method: 'POST',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify({
+        user_name: currentUser,
+        image_name: session.imageName,
+        image_src: session.imageSrc,
+        timestamp: session.timestamp,
+        session_duration: session.sessionDuration,
+        fixation_count: session.fixationHistory ? session.fixationHistory.length : 0,
+        saccade_count: session.saccadeHistory ? session.saccadeHistory.length : 0,
+        gaze_count: session.gazeLog ? session.gazeLog.length : 0,
+        first_fix: session.firstFix || null,
+        fixation_history: session.fixationHistory || [],
+        saccade_history: session.saccadeHistory || [],
+        scan_path_history: session.scanPathHistory || [],
+        gaze_log: session.gazeLog || []
       })
     });
   } catch (e) { console.warn('[profile:save]', e); }
