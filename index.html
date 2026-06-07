@@ -157,7 +157,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
 .va-btn-secondary{background:#fff;color:#111;border:2px solid #111;font-size:12px;font-weight:700;padding:9px 24px;}
 .va-btn-secondary:hover{background:#111;color:#fff;}
 /* ══════════════════════════════════════════════════════════════════════
-   GLOBAL BACKGROUND — gradient on all screens
+   GLOBAL BACKGROUND - gradient on all screens
    ══════════════════════════════════════════════════════════════════════ */
 #nameScreen,
 #libraryScreen,
@@ -731,7 +731,7 @@ import { FaceLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@m
    ══════════════════════════════════════════════════════════════════════ */
 
 const homeScreen=document.getElementById('homeScreen');
-const navHomeLink={classList:{add:()=>{},remove:()=>{}}};// stub — logo handles home now
+const navHomeLink={classList:{add:()=>{},remove:()=>{}}};// stub - logo handles home now
 const navSessionLink=document.getElementById('navSessionLink');
 const navGalleryLink=document.getElementById('navGalleryLink');
 const navDashboardLink=document.getElementById('navDashboardLink');
@@ -1017,7 +1017,7 @@ function renderGalleryScreen(){const body=document.getElementById('galleryBody')
 function captureSession(){return{user:currentUser||'Unknown',age:currentAge,gender:currentGender,location:userLocation,imageSrc:mainImg.src,imageName:imageLibrary[currentImageIdx]?.name||'image',timestamp:Date.now(),sessionDuration:sessionStartTs?Date.now()-sessionStartTs:0,gazeLog:gazeLog.slice(),fixationHistory:fixationHistory.slice(),saccadeHistory:saccadeHistory.slice(),scanPathHistory:scanPathHistory.slice(),firstFix,firstFixModeTs,sessionStartTs};}
 
 /* ══════════════════════════════════════════════════════════════════════
-   profile — save & load (Supabase)
+   profile - save & load (Supabase)
    ══════════════════════════════════════════════════════════════════════ */
 const SUPABASE_URL = 'https://idtghubjdrpcayyarzdr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlkdGdodWJqZHJwY2F5eWFyemRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3OTE4MjIsImV4cCI6MjA5NjM2NzgyMn0.8hIgJUT1aQ3OvgpcRRAEOeHw7uvLUJn-rzw3PjJS9BY';
@@ -1262,13 +1262,14 @@ async function startApp(){
   function ra(a){return 'rgba(233,28,28,'+a+')';}
 
   var MODES=[
-    {name:'Gaze',num:'01 / 06',desc:'Raw gaze positions sampled continuously — every point where the eye looked, frame by frame.'},
+    {name:'Gaze',num:'01 / 06',desc:'Raw gaze positions sampled continuously - every point where the eye looked, frame by frame.'},
     {name:'Fixation',num:'02 / 06',desc:'Sustained gaze on a single region for ≥200ms. Indicates active cognitive processing.'},
     {name:'Saccade',num:'03 / 06',desc:'Rapid eye jumps between fixations. Reveals how the eye explores and scans a scene.'},
-    {name:'Scan path',num:'04 / 06',desc:'The chronological sequence of fixations — the full visual journey across the image.'},
+    {name:'Scan path',num:'04 / 06',desc:'The chronological sequence of fixations - the full visual journey across the image.'},
     {name:'Heatmap',num:'05 / 06',desc:'Density map of visual attention. Hotter areas received more and longer fixations.'},
-    {name:'First fixation',num:'06 / 06',desc:'The very first region noticed — the pre-conscious entry point of visual attention.'}
+    {name:'First fixation',num:'06 / 06',desc:'The very first region noticed - the pre-conscious entry point of visual attention.'}
   ];
+  window._MODES_REF = MODES;
 
   var gazeLog=[
     {x:0.18,y:0.30},{x:0.20,y:0.28},{x:0.22,y:0.32},
@@ -1532,6 +1533,7 @@ async function startApp(){
 
   function goTo(n){
     cur=(n+6)%6;
+    window._modeCur=cur;
     document.getElementById('modeNum').textContent=MODES[cur].num;
     document.getElementById('modeName').textContent=MODES[cur].name;
     document.getElementById('modeDesc').textContent=MODES[cur].desc;
@@ -1564,7 +1566,7 @@ async function startApp(){
  bootHome();
 
 /* ══════════════════════════════════════════════════════════════════════
-   FIBONACCI SPHERE — removed
+   FIBONACCI SPHERE - removed
    ══════════════════════════════════════════════════════════════════════ */
 
 function bootHome(){
@@ -1786,9 +1788,9 @@ function renderDashboard(){
   const dur=latest.sessionDuration?(latest.sessionDuration/1000).toFixed(1):0;
   const ttff=latest.firstFix?((latest.firstFix.startTs-latest.firstFixModeTs)/1000).toFixed(2):null;
   const kpiSection=document.createElement('div');kpiSection.className='dash-section';
-  kpiSection.innerHTML='<div class="dash-section-title">MY LAST SESSION — '+latest.user+'</div>';
+  kpiSection.innerHTML='<div class="dash-section-title">MY LAST SESSION - '+latest.user+'</div>';
   const kpiRow=document.createElement('div');kpiRow.className='dash-kpi-row';
-  kpiRow.innerHTML=`<div class="dash-kpi accent"><div class="dash-kpi-label">FIXATIONS</div><div class="dash-kpi-val">${totalFix||'—'}</div><div class="dash-kpi-sub">gaze holds</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">AVG FIXATIONonds, making 0.25 seconds both a poetic and scieAVG FIXATION</div><div class="dash-kpi-val">${avgFixDur||'—'}<span class="dash-kpi-unit">ms</span></div><div class="dash-kpi-sub">dwell time</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">SACCADES</div><div class="dash-kpi-val">${totalSac||'—'}</div><div class="dash-kpi-sub">eye jumps</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">SAC AMPLITUDE</div><div class="dash-kpi-val">${sacAmp||'—'}<span class="dash-kpi-unit">%</span></div><div class="dash-kpi-sub">avg distance</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">DURATION</div><div class="dash-kpi-val">${dur}<span class="dash-kpi-unit">s</span></div><div class="dash-kpi-sub">viewing time</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">TTFF</div><div class="dash-kpi-val">${ttff||'—'}<span class="dash-kpi-unit">${ttff?'s':''}</span></div><div class="dash-kpi-sub">time to first fix</div></div><div class="dash-kpi"><div class="dash-kpi-label">SAMPLES</div><div class="dash-kpi-val">${latest.gazeLog.length}</div><div class="dash-kpi-sub">gaze points</div></div><div class="dash-kpi"><div class="dash-kpi-label">IMAGE</div><div class="dash-kpi-val" style="font-size:13px">${latest.imageName}</div></div>`;
+  kpiRow.innerHTML=`<div class="dash-kpi accent"><div class="dash-kpi-label">FIXATIONS</div><div class="dash-kpi-val">${totalFix||'-'}</div><div class="dash-kpi-sub">gaze holds</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">AVG FIXATIONonds, making 0.25 seconds both a poetic and scieAVG FIXATION</div><div class="dash-kpi-val">${avgFixDur||'-'}<span class="dash-kpi-unit">ms</span></div><div class="dash-kpi-sub">dwell time</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">SACCADES</div><div class="dash-kpi-val">${totalSac||'-'}</div><div class="dash-kpi-sub">eye jumps</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">SAC AMPLITUDE</div><div class="dash-kpi-val">${sacAmp||'-'}<span class="dash-kpi-unit">%</span></div><div class="dash-kpi-sub">avg distance</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">DURATION</div><div class="dash-kpi-val">${dur}<span class="dash-kpi-unit">s</span></div><div class="dash-kpi-sub">viewing time</div></div><div class="dash-kpi accent"><div class="dash-kpi-label">TTFF</div><div class="dash-kpi-val">${ttff||'-'}<span class="dash-kpi-unit">${ttff?'s':''}</span></div><div class="dash-kpi-sub">time to first fix</div></div><div class="dash-kpi"><div class="dash-kpi-label">SAMPLES</div><div class="dash-kpi-val">${latest.gazeLog.length}</div><div class="dash-kpi-sub">gaze points</div></div><div class="dash-kpi"><div class="dash-kpi-label">IMAGE</div><div class="dash-kpi-val" style="font-size:13px">${latest.imageName}</div></div>`;
   kpiSection.appendChild(kpiRow);container.appendChild(kpiSection);
   const sparkSection=document.createElement('div');sparkSection.className='dash-section';
   sparkSection.innerHTML='<div class="dash-section-title">MY SESSION OVERVIEW</div>';
@@ -1804,7 +1806,7 @@ function makeRingChart(metrics){const wrap=document.createElement('div');wrap.st
 function makeBarChart(title,data,unit=''){const wrap=document.createElement('div');wrap.className='dash-chart-area';const dpr=window.devicePixelRatio||1;const PAD_L=100,PAD_R=60,PAD_T=28,PAD_B=8;const rowH=28,barH=12;const H_canvas=PAD_T+data.length*rowH+PAD_B;const canvas=document.createElement('canvas');canvas.style.width='100%';canvas.style.height=H_canvas+'px';canvas.style.display='block';wrap.appendChild(canvas);setTimeout(()=>{const W2=canvas.offsetWidth||600;canvas.width=W2*dpr;canvas.height=H_canvas*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);const maxVal=Math.max(...data.map(d=>d.val),1);const barZone=W2-PAD_L-PAD_R;ctx.font='700 8px Urbanist';ctx.fillStyle='rgba(0,0,0,0.25)';ctx.textAlign='left';ctx.fillText(title.toUpperCase(),PAD_L,14);for(let g=0;g<=4;g++){const x=PAD_L+barZone*g/4;ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,PAD_T);ctx.lineTo(x,H_canvas-PAD_B);ctx.stroke();}data.forEach((d,i)=>{const y=PAD_T+i*rowH;const barW=barZone*d.val/maxVal;ctx.font='300 9px Urbanist';ctx.fillStyle='rgba(0,0,0,0.45)';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(d.label,PAD_L-10,y+barH/2);ctx.fillStyle='#f0f0f0';ctx.beginPath();const r=barH/2;ctx.roundRect(PAD_L,y,barZone,barH,r);ctx.fill();if(barW>0){ctx.fillStyle='#FF0003';ctx.beginPath();ctx.roundRect(PAD_L,y,barW,barH,r);ctx.fill();}ctx.font='700 9px Urbanist';ctx.fillStyle='rgba(0,0,0,0.4)';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(d.val+(unit?' '+unit:''),PAD_L+barW+8,y+barH/2);});},60);return wrap;}
 
 /* ══════════════════════════════════════════════════════════════════════
-   i18n — Language Toggle
+   i18n - Language Toggle
    ══════════════════════════════════════════════════════════════════════ */
 const TRANSLATIONS = {
   en: {
@@ -1815,9 +1817,28 @@ const TRANSLATIONS = {
     howItWorks:'HOW IT WORKS', analysisModes:'ANALYSIS MODES',
     quickStart:'QUICK START', ready:'READY?',
     howTitle:'From eyes to insights in three steps.',
+    howSub:'The system uses your webcam to detect iris position in real-time, maps gaze to screen coordinates via affine calibration, then classifies movements into research-grade metrics.',
+    step1Title:'EYE TRACKING', step1Desc:'MediaPipe detects 478 facial landmarks per frame, isolating the iris center in both eyes for sub-pixel gaze estimation.',
+    step2Title:'CALIBRATION', step2Desc:'A 9-point affine calibration maps your unique eye movement range to screen coordinates. Keep your head still.',
+    step3Title:'GAZE ANALYSIS', step3Desc:'Gaze samples are classified in real-time into fixations, saccades, scan paths, and heatmaps using I-DT and I-VT algorithms.',
+    modesSub:'Switch between modes in real-time to explore different dimensions of how a viewer scans an image.',
     modesTitle:'Six ways to read visual attention.',
     startTitle:'Up and running in under a minute.',
     readyTitle:'Start your session now.',
+    howto1:'<strong>Allow camera access</strong> when the browser prompts.',
+    howto2:'<strong>Enter your details</strong> for group comparison.',
+    howto3:'<strong>Complete the 9-point calibration.</strong> Eyes only.',
+    howto4:'<strong>Select an image</strong> from the library or upload.',
+    howto5:'<strong>View naturally.</strong> Press FINISH when done.',
+    howto6:'<strong>Explore your data</strong> and compare with others.',
+    modeDescs:[
+      'Raw gaze positions sampled continuously - every point where the eye looked, frame by frame.',
+      'Sustained gaze on a single region for ≥200ms. Indicates active cognitive processing.',
+      'Rapid eye jumps between fixations. Reveals how the eye explores and scans a scene.',
+      'The chronological sequence of fixations - the full visual journey across the image.',
+      'Density map of visual attention. Hotter areas received more and longer fixations.',
+      'The very first region noticed - the pre-conscious entry point of visual attention.'
+    ],
     startSession:'START SESSION',
     nameLabel:'FULL NAME', namePlaceholder:'Your name',
     ageLabel:'AGE', genderLabel:'GENDER',
@@ -1848,9 +1869,28 @@ const TRANSLATIONS = {
     howItWorks:'איך זה עובד', analysisModes:'מצבי ניתוח',
     quickStart:'התחלה מהירה', ready:'מוכן?',
     howTitle:'משלושה שלבים לתובנות.',
+    howSub:'המערכת משתמשת במצלמת הרשת לאיתור מיקום האיריס בזמן אמת, ממפה את המבט לקואורדינטות המסך דרך כיול אפיני, ומסווגת תנועות למדדים ברמת מחקר.',
+    step1Title:'EYE TRACKING', step1Desc:'MediaPipe מזהה 478 נקודות ציון פנים בכל פריים, ומבודד את מרכז האיריס בשתי העיניים לאומדן מבט ברזולוציית תת-פיקסל.',
+    step2Title:'CALIBRATION', step2Desc:'כיול אפיני של 9 נקודות ממפה את טווח תנועת העין הייחודי שלך לקואורדינטות המסך. שמור על ראשך ללא תנועה.',
+    step3Title:'GAZE ANALYSIS', step3Desc:'דגימות המבט מסווגות בזמן אמת לקיבועים, סקאדות, מסלולי סריקה ומפות חום באמצעות אלגוריתמי I-DT ו-I-VT.',
+    modesSub:'עברו בין מצבים בזמן אמת כדי לחקור ממדים שונים של האופן שבו צופה סורק תמונה.',
     modesTitle:'שש דרכים לקרוא תשומת לב חזותית.',
     startTitle:'פעיל ועובד בפחות מדקה.',
     readyTitle:'התחל את הסשן שלך עכשיו.',
+    howto1:'<strong>אפשר גישה למצלמה</strong> כשהדפדפן מבקש.',
+    howto2:'<strong>הזן את פרטיך</strong> להשוואה קבוצתית.',
+    howto3:'<strong>השלם את הכיול של 9 הנקודות.</strong> עיניים בלבד.',
+    howto4:'<strong>בחר תמונה</strong> מהספרייה.',
+    howto5:'<strong>צפה באופן טבעי.</strong> הסשן מסתיים אוטומטית.',
+    howto6:'<strong>חקור את הנתונים שלך</strong> והשווה עם אחרים.',
+    modeDescs:[
+      'מיקומי מבט גולמיים שנדגמו ברציפות - כל נקודה שהעין הסתכלה עליה, פריים אחר פריים.',
+      'מבט ממושך על אזור אחד למשך 200ms לפחות. מעיד על עיבוד קוגניטיבי פעיל.',
+      'קפיצות עין מהירות בין קיבועים. מגלה כיצד העין חוקרת וסורקת סצנה.',
+      'הרצף הכרונולוגי של הקיבועים - המסע החזותי המלא על פני התמונה.',
+      'מפת צפיפות של תשומת הלב החזותית. אזורים חמים יותר קיבלו קיבועים ארוכים יותר.',
+      'האזור הראשון שנוצח - נקודת הכניסה הטרום-מודעת של תשומת הלב החזותית.'
+    ],
     startSession:'התחל סשן',
     nameLabel:'שם מלא', namePlaceholder:'שמך',
     ageLabel:'גיל', genderLabel:'מגדר',
@@ -1929,18 +1969,47 @@ function applyLang(lang){
     genderSel.options[3] && (genderSel.options[3].text = t.other);
   }
 
-  // Calibration canvas text is drawn dynamically — store lang for drawCalIntro/drawCalDone
-  // Home sections labels
-  document.querySelectorAll('.hi-label').forEach((el, i) => {
-    const labels = [t.howItWorks, t.analysisModes, t.quickStart, t.ready];
-    if(labels[i]) el.textContent = labels[i];
-  });
-  document.querySelectorAll('.hi-title').forEach((el, i) => {
-    const titles = [t.howTitle, t.modesTitle, t.startTitle, t.readyTitle];
-    if(titles[i]) el.textContent = titles[i];
-  });
+  // Calibration canvas text is drawn dynamically - store lang for drawCalIntro/drawCalDone
+  // Home sections
+  const hiLabels = document.querySelectorAll('.hi-label');
+  const labelKeys = ['howItWorks','analysisModes','quickStart','ready'];
+  hiLabels.forEach((el,i)=>{ if(labelKeys[i]) el.textContent=t[labelKeys[i]]; });
+
+  const hiTitles = document.querySelectorAll('.hi-title');
+  const titleKeys = ['howTitle','modesTitle','startTitle','readyTitle'];
+  hiTitles.forEach((el,i)=>{ if(titleKeys[i]) el.textContent=t[titleKeys[i]]; });
+
+  const hiSubs = document.querySelectorAll('.hi-sub');
+  if(hiSubs[0]) hiSubs[0].textContent=t.howSub;
+  if(hiSubs[1]) hiSubs[1].textContent=t.modesSub;
+
+  // Steps
+  const stepDescs = document.querySelectorAll('.step-desc');
+  if(stepDescs[0]) stepDescs[0].textContent=t.step1Desc;
+  if(stepDescs[1]) stepDescs[1].textContent=t.step2Desc;
+  if(stepDescs[2]) stepDescs[2].textContent=t.step3Desc;
+  const stepTitles = document.querySelectorAll('.step-title');
+  if(stepTitles[0]) stepTitles[0].textContent=t.step1Title;
+  if(stepTitles[1]) stepTitles[1].textContent=t.step2Title;
+  if(stepTitles[2]) stepTitles[2].textContent=t.step3Title;
+
+  // Quick start list
+  const howtoItems = document.querySelectorAll('.howto-text');
+  const howtoKeys = ['howto1','howto2','howto3','howto4','howto5','howto6'];
+  howtoItems.forEach((el,i)=>{ if(t[howtoKeys[i]]) el.innerHTML=t[howtoKeys[i]]; });
+
+  // Mode slider desc
+  if(t.modeDescs) {
+    const MODES_LOCAL = window._MODES_REF;
+    if(MODES_LOCAL) {
+      t.modeDescs.forEach((d,i)=>{ if(MODES_LOCAL[i]) MODES_LOCAL[i].desc=d; });
+    }
+    const modeDescEl = document.getElementById('modeDesc');
+    if(modeDescEl && t.modeDescs[window._modeCur||0]) modeDescEl.textContent=t.modeDescs[window._modeCur||0];
+  }
+
   const startBtn2 = document.getElementById('homeStartBtn2');
-  if(startBtn2) startBtn2.textContent = t.startSession;
+  if(startBtn2) startBtn2.textContent=t.startSession;
 }
 
 function toggleLang(){
