@@ -10,6 +10,8 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 [lang="he"] body,[lang="he"] button,[lang="he"] input,[lang="he"] select,[lang="he"] label,[lang="he"] span,[lang="he"] p,[lang="he"] h1,[lang="he"] h2,[lang="he"] div{font-family:Heebo,sans-serif;}
+[lang="he"] #modesSection{direction:rtl;}
+[lang="he"] #modesSection .hi-label,[lang="he"] #modesSection .hi-title,[lang="he"] #modesSection .hi-sub,[lang="he"] #modesSection #modeDesc{text-align:right;}
 body{
   background-color:#edf7fd;
   background-image:
@@ -427,10 +429,10 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     </div>
 
 
-    <div class="hi-section" style="padding-right:0;">
-      <div style="display:grid;grid-template-columns:1fr 420px;gap:0;align-items:start;">
+    <div class="hi-section" id="modesSection" style="padding:0;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;align-items:stretch;">
         <!-- Left: text + nav -->
-        <div style="padding-right:48px;display:flex;flex-direction:column;justify-content:space-between;height:100%;">
+        <div style="padding:72px 48px;display:flex;flex-direction:column;justify-content:space-between;">
           <div>
             <div class="hi-label">ANALYSIS MODES</div>
             <h2 class="hi-title">Six ways to read visual attention.</h2>
@@ -438,7 +440,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
             <div style="margin-top:40px;">
               <div id="modeNum" style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#bbb;margin-bottom:12px;">01 / 06</div>
               <div id="modeName" style="font-size:28px;font-weight:600;color:#111;margin-bottom:12px;line-height:1.1;"></div>
-              <div id="modeDesc" style="font-size:14px;font-weight:300;color:#888;line-height:1.7;max-width:280px;"></div>
+              <div id="modeDesc" style="font-size:14px;font-weight:300;color:#888;line-height:1.7;"></div>
             </div>
           </div>
           <div style="display:flex;gap:12px;margin-top:28px;align-items:center;">
@@ -447,9 +449,9 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
             <div id="modeDots" style="display:flex;gap:6px;margin-left:8px;"></div>
           </div>
         </div>
-        <!-- Right: canvas fills full height of section -->
-        <div style="align-self:stretch;display:flex;">
-          <canvas id="modeCanvas" style="width:100%;height:100%;min-height:320px;border-radius:0 0 0 0;background:#f9f9f9;display:block;"></canvas>
+        <!-- Right: canvas -->
+        <div style="display:flex;align-items:stretch;">
+          <canvas id="modeCanvas" style="width:100%;display:block;background:#f9f9f9;"></canvas>
         </div>
       </div>
     </div>
