@@ -453,7 +453,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
         <!-- Right: canvas -->
         <div style="display:flex;align-items:stretch;padding:25px 25px 25px 0;position:relative;">
           <div style="position:relative;width:100%;border-radius:8px;overflow:hidden;">
-            <video id="statueVideo" src="statue.mp4" muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;"></video>
+            <video id="statueVideo" src="statue.mp4" muted playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;"></video>
             <canvas id="modeCanvas" style="width:100%;height:100%;display:block;background:transparent;position:relative;z-index:1;"></canvas>
           </div>
         </div>
@@ -1574,9 +1574,16 @@ async function startApp(){
 })();
 
  bootHome();
-// Autoplay statue video
+// Autoplay statue video and freeze on last frame
 const statueVid = document.getElementById('statueVideo');
-if(statueVid) statueVid.play().catch(()=>{});
+if(statueVid){
+  statueVid.addEventListener('timeupdate', ()=>{
+    if(statueVid.duration && statueVid.currentTime >= statueVid.duration - 0.1){
+      statueVid.pause();
+    }
+  });
+  statueVid.play().catch(()=>{});
+}
 
 /* ══════════════════════════════════════════════════════════════════════
    FIBONACCI SPHERE - removed
