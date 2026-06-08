@@ -452,7 +452,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
         <!-- Right: canvas -->
         <div style="display:flex;align-items:stretch;padding:25px 25px 25px 0;position:relative;">
           <div style="position:relative;width:100%;border-radius:8px;overflow:hidden;">
-            <video src="statue.mp4" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.5;"></video>
+            <video id="statueVideo" src="statue.mp4" muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;"></video>
             <canvas id="modeCanvas" style="width:100%;height:100%;display:block;background:transparent;position:relative;z-index:1;"></canvas>
           </div>
         </div>
@@ -1432,7 +1432,7 @@ async function startApp(){
       }
       for(var j=0;j<count;j++){
         var p=fixHist[j],cx=p.x*W,cy=p.y*H;
-        ctx.beginPath();ctx.arc(cx,cy,NODE_R,0,Math.PI*2);ctx.fillStyle='#f9f9f9';ctx.fill();
+        ctx.beginPath();ctx.arc(cx,cy,NODE_R,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fill();
         ctx.beginPath();ctx.arc(cx,cy,NODE_R,0,Math.PI*2);ctx.strokeStyle=RED;ctx.lineWidth=1.5;ctx.stroke();
         ctx.fillStyle=RED;ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
         ctx.fillText(j+1,cx,cy);
@@ -1572,6 +1572,9 @@ async function startApp(){
 })();
 
  bootHome();
+// Autoplay statue video
+const statueVid = document.getElementById('statueVideo');
+if(statueVid) statueVid.play().catch(()=>{});
 
 /* ══════════════════════════════════════════════════════════════════════
    FIBONACCI SPHERE - removed
