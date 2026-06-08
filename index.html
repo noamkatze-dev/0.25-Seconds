@@ -50,7 +50,7 @@ body{
 #navLinks{display:flex;gap:28px;align-items:center;}
 .nav-link{font-size:10px;font-weight:700;letter-spacing:0.22em;color:rgba(255,255,255,0.7);cursor:pointer;user-select:none;transition:color 0.15s;}
 .nav-link:hover,.nav-link.active{color:#fff;}
-.nav-login{font-size:10px;font-weight:700;letter-spacing:0.22em;cursor:pointer;user-select:none;background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.6);color:#fff;padding:6px 18px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background 0.15s;}
+.nav-login{font-size:10px;font-weight:700;letter-spacing:0.22em;cursor:pointer;user-select:none;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:6px 18px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background 0.15s;}
 .nav-login:hover{background:rgba(255,255,255,0.55);}
 .nav-login.hidden{display:none;}
 
@@ -1592,7 +1592,7 @@ function bootHome(){
       const dark = hs.scrollTop < heroH - 10;
       const nav = document.getElementById('mainNav');
       if(nav){
-        nav.style.background = dark ? 'transparent' : 'rgba(255,255,255,0.85)';
+        nav.style.background = dark ? 'transparent' : 'rgba(255,255,255,0.6)';
         nav.style.backdropFilter = dark ? 'none' : 'blur(16px)';
         nav.style.webkitBackdropFilter = dark ? 'none' : 'blur(16px)';
         nav.style.borderBottomColor = dark ? 'transparent' : 'rgba(0,0,0,0.06)';
