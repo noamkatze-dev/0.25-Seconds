@@ -1306,8 +1306,9 @@ async function startApp(){
     var rect=el.getBoundingClientRect();
     W=rect.width||280; H=rect.height||168;
     el.width=W*dpr; el.height=H*dpr;
-    ctx=el.getContext('2d');
+    ctx=el.getContext('2d',{alpha:true});
     ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,W,H);
     return true;
   }
 
