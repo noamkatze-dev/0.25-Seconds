@@ -320,6 +320,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
 .ns-field input:focus,.ns-field select:focus{border-color:rgba(178,224,243,0.8);outline:none;}
 .ns-field input::placeholder{color:#bbb;font-size:14px;}
 .ns-field select{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;}
+[dir="rtl"] .ns-field select{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left 14px center;padding-right:16px;padding-left:40px;}
 .ns-field input:-webkit-autofill,
 .ns-field input:-webkit-autofill:hover,
 .ns-field input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0px 1000px #fff inset;-webkit-text-fill-color:#111;transition:background-color 5000s ease-in-out 0s;}
@@ -1739,17 +1740,31 @@ async function renderProfile(){
     return;
   }
 
-  const profile=await loadProfile(currentUser);
-  if(!profile){
-    body.innerHTML='<div style="font-size:11px;letter-spacing:0.2em;color:#bbb;text-align:center;padding:60px 0;">NO PROFILE FOUND FOR '+currentUser.toUpperCase()+'</div>';
+  const remoteProfile = await loadProfile(currentUser);
+
+  // Use remote profile if available, otherwise build from local sessions
+  const localSessions = allSessions.filter(s => s.user === currentUser);
+  if(!remoteProfile && localSessions.length === 0){
+    body.innerHTML='<div style="font-size:11px;letter-spacing:0.2em;color:#bbb;text-align:center;padding:60px 0;">NO SESSIONS YET FOR '+currentUser.toUpperCase()+'</div>';
     return;
   }
 
-  const sessions=profile.sessions||[];
-  const totalFix=sessions.reduce((s,ss)=>s+(ss.fixation_count||0),0);
-  const totalSac=sessions.reduce((s,ss)=>s+(ss.saccade_count||0),0);
-  const avgFix=0; // not stored separately
-  const avgDur=sessions.length?+(sessions.reduce((s,ss)=>s+(ss.session_duration||0),0)/sessions.length/1000).toFixed(1):0;
+  const profile = remoteProfile || { name: currentUser, age: currentAge, gender: currentGender, created_at: new Date().toISOString() };
+
+  // Sessions: prefer remote, fall back to local
+  const remoteSessions = remoteProfile ? (remoteProfile.sessions || []) : [];
+  const sessions = remoteSessions.length > 0 ? remoteSessions : localSessions.map(s=>({
+    image_name: s.imageName,
+    timestamp: s.timestamp,
+    session_duration: s.sessionDuration,
+    fixation_count: s.fixationHistory?.length || 0,
+    saccade_count: s.saccadeHistory?.length || 0,
+  }));
+
+  const totalFix=sessions.reduce((s,ss)=>s+(ss.fixation_count||ss.fixationHistory?.length||0),0);
+  const totalSac=sessions.reduce((s,ss)=>s+(ss.saccade_count||ss.saccadeHistory?.length||0),0);
+  const avgFix=0;
+  const avgDur=sessions.length?+(sessions.reduce((s,ss)=>s+(ss.session_duration||ss.sessionDuration||0),0)/sessions.length/1000).toFixed(1):0;
 
   body.innerHTML=`
     <div style="max-width:800px;margin:0 auto;">
@@ -2119,6 +2134,13 @@ function applyLang(lang){
 
   const startBtn2 = document.getElementById('homeStartBtn2');
   if(startBtn2) startBtn2.textContent=t.startSession;
+
+  // About screen
+  const aboutSections = document.querySelectorAll('#aboutBody p[style*="letter-spacing:0.4em"]');
+  const aboutKeys = ['aboutTitle', 'theSystem', 'researchFocus', 'whatWeMeasure', 'builtBy', 'aboutTitle'];
+  aboutSections.forEach((el, i) => {
+    if(t[aboutKeys[i]]) el.textContent = t[aboutKeys[i]];
+  });
 
   fixTimelineLines(isHe);
 
