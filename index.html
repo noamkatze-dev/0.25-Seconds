@@ -392,7 +392,8 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     <span class="nav-link nav-authenticated" id="navDashboardLink" style="display:none;">DASHBOARD</span>
     <span class="nav-link nav-authenticated" id="navProfileLink" style="display:none;">PROFILE</span>
     <span class="nav-link" id="navAboutLink">ABOUT</span>
-    <span class="nav-login" id="navLoginBtn">SIGN IN</span>
+    <span class="nav-login" id="navSignupBtn">SIGN UP</span>
+    <span class="nav-login" id="navLoginBtn" style="background:transparent;border-color:rgba(255,255,255,0.4);">LOG IN</span>
     <button id="langToggle" style="background:none;border:none;font-family:Urbanist,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px 8px;transition:color 0.15s;">EN</button>
   </div>
 </nav>
@@ -794,10 +795,16 @@ const navDashboardLink=document.getElementById('navDashboardLink');
 const navProfileLink=document.getElementById('navProfileLink');
 const navAboutLink=document.getElementById('navAboutLink');
 const navLoginBtn=document.getElementById('navLoginBtn');
+const navSignupBtn=document.getElementById('navSignupBtn');
 navAboutLink.addEventListener('click',()=>openAbout());
+navSignupBtn.addEventListener('click',async()=>{
+  await showNameScreen('signup');
+  showAuthNav();
+  userLoggedIn=true;
+  showHome();
+});
 navLoginBtn.addEventListener('click',async()=>{
-  await showNameScreen();
-  // if came via login tab, go to home (not start session)
+  await showNameScreen('login');
   showAuthNav();
   userLoggedIn=true;
   showHome();
@@ -826,8 +833,14 @@ function setNavTheme(theme){
   const login = document.getElementById('navLoginBtn');
   if(login){
     login.style.color = isLight ? '#111' : '#fff';
-    login.style.borderColor = isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)';
-    login.style.background = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)';
+    login.style.borderColor = isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.4)';
+    login.style.background = isLight ? 'transparent' : 'transparent';
+  }
+  const signup = document.getElementById('navSignupBtn');
+  if(signup){
+    signup.style.color = isLight ? '#111' : '#fff';
+    signup.style.borderColor = isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)';
+    signup.style.background = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)';
   }
 }
 
@@ -1002,7 +1015,7 @@ function generateCode(){
   return code;
 }
 
-async function showNameScreen(){return new Promise(resolve=>{
+async function showNameScreen(initialTab='signup'){return new Promise(resolve=>{
   document.getElementById('aboutScreen').style.display='none';
   document.getElementById('homeScreen').style.display='none';
   const scr=document.getElementById('nameScreen');
@@ -1034,7 +1047,7 @@ async function showNameScreen(){return new Promise(resolve=>{
 
   tabSignup.onclick=showSignup;
   tabLogin.onclick=showLogin;
-  showSignup();
+  if(initialTab==='login') showLogin(); else showSignup();
   scr.style.display='flex';
 
   // SIGN UP
@@ -1412,6 +1425,8 @@ function hideAllScreens(){
 function showAuthNav(){
   document.querySelectorAll('.nav-authenticated').forEach(el=>el.style.display='');
   document.getElementById('navLoginBtn').classList.add('hidden');
+  const signup=document.getElementById('navSignupBtn');
+  if(signup) signup.classList.add('hidden');
 }
 
 
@@ -2022,7 +2037,7 @@ function makeBarChart(title,data,unit=''){const wrap=document.createElement('div
 const TRANSLATIONS = {
   en: {
     navData:'DATA', navGallery:'GALLERY', navDashboard:'DASHBOARD',
-    navProfile:'PROFILE', navAbout:'ABOUT', navLogin:'SIGN IN',
+    navProfile:'PROFILE', navAbout:'ABOUT', navLogin:'LOG IN', navSignup:'SIGN UP',
     eyebrow:'VISUAL ANALYSIS SYSTEM', heading:'YOU SEE, WE MEASURE.',
     startBtn:'START', scrollHint:'SCROLL TO LEARN MORE',
     howItWorks:'HOW IT WORKS', analysisModes:'ANALYSIS MODES',
@@ -2084,7 +2099,7 @@ const TRANSLATIONS = {
   },
   he: {
     navData:'נתונים', navGallery:'גלריה', navDashboard:'לוח בקרה',
-    navProfile:'פרופיל', navAbout:'אודות', navLogin:'כניסה',
+    navProfile:'פרופיל', navAbout:'אודות', navLogin:'כניסה', navSignup:'הרשמה',
     eyebrow:'מערכת ניתוח חזותי', heading:'אתה מביט, אנחנו מודדים.',
     startBtn:'התחל', scrollHint:'גלול למידע נוסף',
     howItWorks:'איך זה עובד', analysisModes:'מצבי ניתוח',
@@ -2191,6 +2206,8 @@ function applyLang(lang){
   if(navAbt) navAbt.textContent = t.navAbout;
   const navLog = document.getElementById('navLoginBtn');
   if(navLog) navLog.textContent = t.navLogin;
+  const navSup = document.getElementById('navSignupBtn');
+  if(navSup) navSup.textContent = t.navSignup;
 
   // Home hero
   const eyebrow = document.querySelector('.home-eyebrow');
