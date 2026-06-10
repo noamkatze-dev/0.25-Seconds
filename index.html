@@ -52,6 +52,8 @@ body{
 .nav-link:hover,.nav-link.active{color:#fff;}
 .nav-login{font-size:10px;font-weight:700;letter-spacing:0.22em;cursor:pointer;user-select:none;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:6px 18px;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background 0.15s;}
 .nav-login:hover{background:rgba(255,255,255,0.55);}
+.nav-login-outline{background:transparent;border-color:rgba(255,255,255,0.4);}
+.nav-login-outline:hover{background:rgba(255,255,255,0.55);}
 /* ↓ FIXED: unified single hover rule, matching .nav-login:hover exactly */
 #homeStartBtn:hover{background:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.8);}
 .nav-login.hidden{display:none;}
@@ -393,7 +395,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     <span class="nav-link nav-authenticated" id="navProfileLink" style="display:none;">PROFILE</span>
     <span class="nav-link" id="navAboutLink">ABOUT</span>
     <span class="nav-login" id="navSignupBtn">SIGN UP</span>
-    <span class="nav-login" id="navLoginBtn" style="background:transparent;border-color:rgba(255,255,255,0.4);">LOG IN</span>
+    <span class="nav-login nav-login-outline" id="navLoginBtn">LOG IN</span>
     <button id="langToggle" style="background:none;border:none;font-family:Urbanist,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px 8px;transition:color 0.15s;">EN</button>
   </div>
 </nav>
