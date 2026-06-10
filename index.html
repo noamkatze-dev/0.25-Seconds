@@ -1642,16 +1642,16 @@ function bootHome(){
         nav.style.borderBottomColor = dark ? 'transparent' : 'rgba(0,0,0,0.06)';
       }
       document.querySelectorAll('.nav-link').forEach(el=>{
-        el.style.color = dark ? '' : '#5783B6';
+        el.style.color = dark ? '' : '#111';
       });
       const va = document.querySelector('.nav-va');
-      if(va) va.style.color = dark ? '#fff' : '#5783B6';
+      if(va) va.style.color = dark ? '#fff' : '#111';
       const lang = document.getElementById('langToggle');
-      if(lang) lang.style.color = dark ? 'rgba(255,255,255,0.7)' : '#5783B6';
+      if(lang) lang.style.color = dark ? 'rgba(255,255,255,0.7)' : '#111';
       const login = document.getElementById('navLoginBtn');
       if(login){
-        login.style.color = dark ? '#fff' : '#5783B6';
-        login.style.borderColor = dark ? 'rgba(255,255,255,0.6)' : 'rgba(87,131,182,0.4)';
+        login.style.color = dark ? '#fff' : '#111';
+        login.style.borderColor = dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.25)';
       }
     },{passive:true});
   }
