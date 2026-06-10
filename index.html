@@ -477,7 +477,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     <div class="hi-section hi-section-dark" style="text-align:center;padding:80px 60px;">
       <div class="hi-label hi-label-light">READY?</div>
       <h2 class="hi-title hi-title-light" style="margin-bottom:32px;">Start your session now.</h2>
-      <button id="homeStartBtn2" style="background:rgba(255,255,255,0.35);color:#333;border:1px solid rgba(255,255,255,0.6);font-family:Urbanist,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:14px 48px;cursor:pointer;border-radius:100px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">START SESSION</button>
+      <button id="homeStartBtn2" style="background:#111;color:#fff;border:none;font-family:Urbanist,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;padding:16px 48px;cursor:pointer;border-radius:100px;transition:background 0.18s;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='#111'">START</button>
     </div>
   </div>
 </div>
@@ -720,6 +720,29 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
         Supervised by Ronit Izraeli.<br>
         Conceived, designed, and developed from scratch - including research framework, UX design, and full front-end and back-end development.
       </p>
+    </div>
+
+    <div style="border-top:1px solid rgba(178,224,243,0.4);padding-top:36px;padding-bottom:60px;">
+      <p style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 20px;font-family:Urbanist,sans-serif;">IMAGE CREDITS</p>
+      <p style="font-size:12px;font-weight:300;color:#aaa;line-height:1.8;margin:0 0 20px;font-family:Urbanist,sans-serif;">
+        All images courtesy of the Government Press Office of Israel (לשכת העיתונות הממשלתית).
+      </p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 32px;font-family:Urbanist,sans-serif;">
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.3em;color:#bbb;padding-bottom:8px;border-bottom:1px solid #f0f0f0;">IMAGE</div>
+          <div style="font-size:8px;font-weight:700;letter-spacing:0.3em;color:#bbb;padding-bottom:8px;border-bottom:1px solid #f0f0f0;">PHOTOGRAPHER</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Politics 4</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Government Press Office</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Politics 5</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Government Press Office</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Politics 7</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Government Press Office</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Politics 8</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Government Press Office</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Politics 9</div>
+          <div style="font-size:12px;font-weight:300;color:#888;">Government Press Office</div>
+        </div>
+      </div>
     </div>
 
     </div>
@@ -1912,7 +1935,7 @@ const TRANSLATIONS = {
       'מפת צפיפות של תשומת הלב החזותית. אזורים חמים יותר קיבלו קיבועים ארוכים יותר.',
       'האזור הראשון שנוצד - נקודת הכניסה הטרום-מודעת של תשומת הלב החזותית.'
     ],
-    startSession:'התחל סשן',
+    startSession:'התחל',
     nameLabel:'שם מלא', namePlaceholder:'שמך',
     ageLabel:'גיל', genderLabel:'מגדר',
     male:'זכר', female:'נקבה', other:'אחר',
