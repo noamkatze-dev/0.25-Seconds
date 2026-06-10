@@ -123,7 +123,7 @@ body{
 .home-scroll-hint{font-size:9px;font-weight:600;letter-spacing:0.4em;color:#FF0003;display:flex;flex-direction:column;align-items:center;gap:11px;position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:4;pointer-events:none;transition:opacity 0.4s ease;}
 .home-scroll-hint-arrow{font-size:22px;color:#FF0003;line-height:1;}
 
-#homeInfo{position:relative;z-index:4;pointer-events:all;background:#fff;}
+#homeInfo{position:relative;z-index:4;pointer-events:all;background:rgba(255,255,255,0.82);backdrop-filter:blur(2px);}
 .hi-section{padding:72px 60px;}
 .hi-section+.hi-section{border-top:none;}
 .hi-section-dark{background:transparent;}
@@ -402,11 +402,11 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
 
 <div id="homeScreen">
 
-  <div id="homeHeroSection">
+  <!-- Sky video - fixed, covers entire home screen -->
+  <video id="homeSkyVideo" src="sky.mp4" muted playsinline loop preload="auto"
+    style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:8998;opacity:0.7;pointer-events:none;filter:contrast(1.1) saturate(1.15);display:none;"></video>
 
-    <!-- Sky video background -->
-    <video id="homeSkyVideo" src="sky.mp4" muted playsinline loop preload="auto"
-      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.7;pointer-events:none;filter:contrast(1.1) saturate(1.15);"></video>
+  <div id="homeHeroSection">
 
     <div id="heroRight" style="position:relative;z-index:2;">
       <div class="home-eyebrow">VISUAL ANALYSIS SYSTEM</div>
@@ -654,6 +654,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     <div style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#bbb;font-family:Urbanist,sans-serif;">YOUR PARTICIPANT CODE</div>
     <div id="nsCode" style="font-size:48px;font-weight:700;color:#111;letter-spacing:0.15em;font-family:Urbanist,sans-serif;"></div>
     <div style="font-size:12px;font-weight:300;color:#999;text-align:center;max-width:280px;line-height:1.7;font-family:Urbanist,sans-serif;">Save this code if you wish to return. It identifies your session anonymously.</div>
+    <div id="nsCodeWarning" style="display:none;font-size:11px;color:#FF0003;text-align:center;max-width:280px;line-height:1.6;font-family:Urbanist,sans-serif;">⚠️ Could not save to server. Your code works for this session only.</div>
     <button id="nsCodeContinue" class="va-btn va-btn-primary">BEGIN</button>
   </div>
 
@@ -680,7 +681,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
   <div id="aboutBody" style="flex:1;overflow-y:auto;padding:48px 60px;">
     <div style="max-width:720px;margin:0 auto;padding:0;">
 
-    <p style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#aaa;margin:0 0 20px;font-family:Urbanist,sans-serif;">ABOUT</p>
+    <p id="about-label-title" style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#aaa;margin:0 0 20px;font-family:Urbanist,sans-serif;">ABOUT</p>
 
     <h1 style="font-size:36px;font-weight:900;color:#111;margin:0 0 12px;line-height:1.1;font-family:Urbanist,sans-serif;">0.25 SECONDS</h1>
 
@@ -689,7 +690,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     </p>
 
     <div style="border-top:1px solid rgba(178,224,243,0.4);padding-top:36px;margin-bottom:36px;">
-      <p style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 16px;font-family:Urbanist,sans-serif;">THE SYSTEM</p>
+      <p id="about-label-system" style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 16px;font-family:Urbanist,sans-serif;">THE SYSTEM</p>
       <p style="font-size:15px;color:#666;line-height:1.8;margin:0 0 14px;font-family:Urbanist,sans-serif;">
         0.25 Seconds is a browser-based eye tracking system for analyzing visual attention on political imagery. It measures where viewers look, what they notice first, and how their gaze moves across an image - without any hardware beyond a standard webcam.
       </p>
@@ -699,7 +700,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     </div>
 
     <div style="border-top:1px solid rgba(178,224,243,0.4);padding-top:36px;margin-bottom:36px;">
-      <p style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 16px;font-family:Urbanist,sans-serif;">RESEARCH FOCUS</p>
+      <p id="about-label-research" style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 16px;font-family:Urbanist,sans-serif;">RESEARCH FOCUS</p>
       <p style="font-size:15px;color:#666;line-height:1.8;margin:0 0 14px;font-family:Urbanist,sans-serif;">
         The system was designed to study visual attention patterns on political images - examining which regions attract the eye first, how long the gaze dwells on different areas, and whether distinct viewing patterns emerge across different observers.
       </p>
@@ -709,7 +710,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     </div>
 
     <div style="border-top:1px solid rgba(178,224,243,0.4);padding-top:36px;margin-bottom:36px;">
-      <p style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 24px;font-family:Urbanist,sans-serif;">WHAT WE MEASURE</p>
+      <p id="about-label-measure" style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 24px;font-family:Urbanist,sans-serif;">WHAT WE MEASURE</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
         <div style="background:rgba(255,255,255,0.7);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.6);backdrop-filter:blur(12px);">
           <p style="font-size:9px;font-weight:700;letter-spacing:0.25em;color:#aaa;margin:0 0 6px;font-family:Urbanist,sans-serif;">FIXATION</p>
@@ -739,7 +740,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     </div>
 
     <div style="border-top:1px solid rgba(178,224,243,0.4);padding-top:36px;padding-bottom:60px;">
-      <p style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 16px;font-family:Urbanist,sans-serif;">BUILT BY</p>
+      <p id="about-label-built" style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 16px;font-family:Urbanist,sans-serif;">BUILT BY</p>
       <p style="font-size:17px;font-weight:700;color:#111;margin:0 0 6px;font-family:Urbanist,sans-serif;">Noam Katzenelbogen</p>
       <p style="font-size:13px;color:#888;line-height:1.8;margin:0;font-family:Urbanist,sans-serif;">
         Final project - Bachelor of Visual Communication, University of Haifa.<br>
@@ -749,7 +750,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     </div>
 
     <div style="border-top:1px solid rgba(178,224,243,0.4);padding-top:36px;padding-bottom:60px;">
-      <p style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 20px;font-family:Urbanist,sans-serif;">IMAGE CREDITS</p>
+      <p id="about-label-credits" style="font-size:9px;font-weight:700;letter-spacing:0.4em;color:#aaa;margin:0 0 20px;font-family:Urbanist,sans-serif;">IMAGE CREDITS</p>
       <p style="font-size:12px;font-weight:300;color:#aaa;line-height:1.8;margin:0 0 20px;font-family:Urbanist,sans-serif;">
         All images courtesy of the Government Press Office of Israel (לשכת העיתונות הממשלתית).
       </p>
@@ -849,9 +850,14 @@ function showHome(){
   hideAllScreens();
   setNavTheme('dark');
   homeScreen.style.display='block';
+  document.getElementById('homeSkyVideo').style.display='block';
   navHomeLink.classList.add('active');
 }
-function hideHome(){homeScreen.style.display='none';navHomeLink.classList.remove('active');}
+function hideHome(){
+  homeScreen.style.display='none';
+  document.getElementById('homeSkyVideo').style.display='none';
+  navHomeLink.classList.remove('active');
+}
 
 function goToSession(){hideHome();if(!appStarted){appStarted=true;startApp();}}
 
@@ -1060,15 +1066,26 @@ async function showNameScreen(initialTab='signup'){return new Promise(resolve=>{
 
     // Save to Supabase FIRST, then show code
     btn.textContent='...';
+    let saveOk = false;
     try{
-      const result = await sbFetch('profiles?on_conflict=name',{
+      await sbFetch('profiles?on_conflict=name',{
         method:'POST',
         headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
         body:JSON.stringify({name:currentUser,age:currentAge,gender:currentGender,location:userLocation})
       });
+      saveOk = true;
       console.log('[profile:create] saved', currentUser);
     }catch(e){
       console.warn('[profile:create] FAILED', e);
+      // Show code anyway but warn user
+      codeEl.textContent=code;
+      codeEl.style.color='#FF0003';
+      step1.style.display='none';
+      step2.style.display='flex';
+      const warnEl = document.getElementById('nsCodeWarning');
+      if(warnEl) warnEl.style.display='block';
+      btn.textContent='CONTINUE';
+      return;
     }
 
     codeEl.textContent=code;
@@ -1432,6 +1449,7 @@ document.getElementById('playBtn').addEventListener('click',()=>{playLayer(dataA
 
 function hideAllScreens(){
   homeScreen.style.display='none';
+  document.getElementById('homeSkyVideo').style.display='none';
   document.getElementById('dataScreen').style.display='none';
   document.getElementById('galleryScreen').style.display='none';
   document.getElementById('dashboardScreen').style.display='none';
@@ -2339,12 +2357,22 @@ function applyLang(lang){
   const startBtn2 = document.getElementById('homeStartBtn2');
   if(startBtn2) startBtn2.textContent=t.startSession;
 
-  // About screen
-  const aboutSections = document.querySelectorAll('#aboutBody p[style*="letter-spacing:0.4em"]');
-  const aboutKeys = ['aboutTitle', 'theSystem', 'researchFocus', 'whatWeMeasure', 'builtBy', 'aboutTitle'];
-  aboutSections.forEach((el, i) => {
-    if(t[aboutKeys[i]]) el.textContent = t[aboutKeys[i]];
+  // About screen labels
+  const aboutMap = {
+    'about-label-title': 'aboutTitle',
+    'about-label-system': 'theSystem',
+    'about-label-research': 'researchFocus',
+    'about-label-measure': 'whatWeMeasure',
+    'about-label-built': 'builtBy',
+    'about-label-credits': 'imageCredits',
+  };
+  Object.entries(aboutMap).forEach(([id, key])=>{
+    const el = document.getElementById(id);
+    if(el && t[key]) el.textContent = t[key];
   });
+  const creditsDesc = document.querySelector('#aboutBody p[style*="max-width:480px"]') || 
+    [...document.querySelectorAll('#aboutBody p')].find(p=>p.textContent.includes('courtesy of'));
+  if(creditsDesc && t.imageCreditsDesc) creditsDesc.textContent = t.imageCreditsDesc;
 
   fixTimelineLines(isHe);
 
