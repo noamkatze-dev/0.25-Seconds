@@ -144,10 +144,6 @@ body{
 .howto-text strong{font-weight:700;color:#111;}
 .howto-dot{width:10px;height:10px;border-radius:50%;background:#111;flex-shrink:0;margin:10px 0 14px;position:relative;z-index:1;}
 .howto-line{position:absolute;top:calc(10px + 10px + 5px);left:50%;width:100%;height:1px;background:#e0e0e0;}
-[dir="rtl"] .howto-line{left:auto;right:50%;}
-.howto-list li:last-child .howto-line{display:none;}
-[dir="rtl"] .howto-list li:last-child .howto-line{display:block;}
-[dir="rtl"] .howto-list li:first-child .howto-line{display:none;}
 .modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:transparent;width:100%;}
 .mode-card{background:#fff;padding:20px 20px 16px;border-left:1px solid #eee;border-bottom:1px solid #eee;}
 .mode-card:nth-child(1),.mode-card:nth-child(4){border-left:none;}
@@ -1977,6 +1973,25 @@ const TRANSLATIONS = {
 
 let currentLang = localStorage.getItem('lang') || 'en';
 
+function fixTimelineLines(isRtl){
+  const items = document.querySelectorAll('.howto-list li');
+  items.forEach((li, i) => {
+    const line = li.querySelector('.howto-line');
+    if(!line) return;
+    if(isRtl){
+      // RTL: flex reverses visually, last item in DOM appears leftmost
+      // hide line on last item (06, leftmost in RTL = no next step)
+      line.style.display = i === items.length - 1 ? 'none' : 'block';
+      line.style.left = 'auto';
+      line.style.right = '50%';
+    } else {
+      line.style.display = i === items.length - 1 ? 'none' : 'block';
+      line.style.left = '50%';
+      line.style.right = 'auto';
+    }
+  });
+}
+
 function applyLang(lang){
   currentLang = lang;
   localStorage.setItem('lang', lang);
@@ -2070,6 +2085,8 @@ function applyLang(lang){
 
   const startBtn2 = document.getElementById('homeStartBtn2');
   if(startBtn2) startBtn2.textContent=t.startSession;
+
+  fixTimelineLines(isHe);
 }
 
 function toggleLang(){
