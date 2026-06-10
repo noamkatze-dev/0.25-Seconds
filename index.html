@@ -1596,6 +1596,18 @@ async function startApp(){
 })();
 
  bootHome();
+// Sync bottom START button width to top START button
+document.fonts.ready.then(()=>{
+  const btn1 = document.getElementById('homeStartBtn');
+  const btn2 = document.getElementById('homeStartBtn2');
+  if(btn1 && btn2){
+    const syncWidth = () => {
+      btn2.style.width = btn1.offsetWidth + 'px';
+    };
+    syncWidth();
+    window.addEventListener('resize', syncWidth);
+  }
+});
 // Autoplay statue video and freeze on last frame
 const statueVid = document.getElementById('statueVideo');
 if(statueVid){
@@ -1883,7 +1895,7 @@ const TRANSLATIONS = {
       'Density map of visual attention. Hotter areas received more and longer fixations.',
       'The very first region noticed - the pre-conscious entry point of visual attention.'
     ],
-    startSession:'START SESSION',
+    startSession:'START',
     nameLabel:'FULL NAME', namePlaceholder:'Your name',
     ageLabel:'AGE', genderLabel:'GENDER',
     male:'Male', female:'Female', other:'Other',
