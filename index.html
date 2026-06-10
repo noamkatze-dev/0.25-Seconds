@@ -1109,8 +1109,7 @@ const POLITICAL_IMAGES = [
   { src: 'Politics 8.png', name: 'Politics 8' },
   { src: 'Politics 9.png', name: 'Politics 9' },
 ];
-const IMAGE_DURATION = 12000; // 12 seconds
-const SKY_DURATION   = 5000;  // 5 seconds
+const IMAGE_DURATION = 5000; // 5 seconds
 
 function shuffleArray(arr){
   const a=[...arr];
@@ -1191,7 +1190,6 @@ async function runFullSequence(){
   document.getElementById('mainNav').style.display='none';
   for(let i=0;i<shuffled.length;i++){
     await runImageSession(shuffled[i]);
-    if(i<shuffled.length-1) await showSkyVideo();
   }
   document.getElementById('mainNav').style.display='flex';
   openGallery();
