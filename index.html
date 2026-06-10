@@ -139,14 +139,15 @@ body{
 .step-desc{font-size:12px;font-weight:300;color:#888;line-height:1.7;}
 .howto-list{list-style:none;width:100%;display:flex;flex-direction:row;align-items:flex-start;position:relative;}
 .howto-list li{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;padding:0 12px;}
-.howto-list li:first-child{padding-left:0;}
-.howto-list li:last-child{padding-right:0;}
 .howto-n{font-size:10px;font-weight:700;color:#bbb;letter-spacing:0.2em;}
 .howto-text{font-size:12px;font-weight:300;color:#666;line-height:1.65;text-align:center;}
 .howto-text strong{font-weight:700;color:#111;}
 .howto-dot{width:10px;height:10px;border-radius:50%;background:#111;flex-shrink:0;margin:10px 0 14px;position:relative;z-index:1;}
-.howto-line{position:absolute;top:calc(10px + 10px + 5px);left:calc(50% + 5px);right:calc(-50% + 5px);height:1px;background:#e0e0e0;}
+.howto-line{position:absolute;top:calc(10px + 10px + 5px);left:50%;width:100%;height:1px;background:#e0e0e0;}
+[dir="rtl"] .howto-line{left:auto;right:50%;}
 .howto-list li:last-child .howto-line{display:none;}
+[dir="rtl"] .howto-list li:last-child .howto-line{display:block;}
+[dir="rtl"] .howto-list li:first-child .howto-line{display:none;}
 .modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:transparent;width:100%;}
 .mode-card{background:#fff;padding:20px 20px 16px;border-left:1px solid #eee;border-bottom:1px solid #eee;}
 .mode-card:nth-child(1),.mode-card:nth-child(4){border-left:none;}
