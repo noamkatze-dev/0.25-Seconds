@@ -619,11 +619,7 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
 
 <div id="nameScreen">
   <div class="ns-title">VISUAL ANALYSIS SYSTEM</div>
-  <div class="ns-form">
-    <div class="ns-field">
-      <label for="nameInput">FULL NAME</label>
-      <input id="nameInput" type="text" autocomplete="off" spellcheck="false" placeholder="Your name"/>
-    </div>
+  <div class="ns-form" id="nsFormStep1">
     <div class="ns-row">
       <div class="ns-field">
         <label for="ageInput">AGE</label>
@@ -640,6 +636,14 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
       </div>
     </div>
     <button id="nameContinue" class="va-btn va-btn-primary">CONTINUE</button>
+  </div>
+
+  <!-- Step 2: show generated code -->
+  <div id="nsFormStep2" style="display:none;flex-direction:column;align-items:center;gap:24px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#bbb;font-family:Urbanist,sans-serif;">YOUR PARTICIPANT CODE</div>
+    <div id="nsCode" style="font-size:48px;font-weight:700;color:#111;letter-spacing:0.15em;font-family:Urbanist,sans-serif;"></div>
+    <div style="font-size:12px;font-weight:300;color:#999;text-align:center;max-width:280px;line-height:1.7;font-family:Urbanist,sans-serif;">Save this code if you wish to return. It identifies your session anonymously.</div>
+    <button id="nsCodeContinue" class="va-btn va-btn-primary">BEGIN</button>
   </div>
 </div>
 
@@ -972,11 +976,56 @@ function renderLib(){const grid=document.getElementById('libGrid');grid.innerHTM
 function updateBeginBtn(){const btn=document.getElementById('libBeginBtn');const ok=imageLibrary.length>0&&!isImageViewed(currentImageIdx);btn.disabled=!ok;btn.style.opacity=ok?'1':'0.4';}
 document.getElementById('libFileInput').addEventListener('change',e=>{Array.from(e.target.files).forEach(file=>{const r=new FileReader();r.onload=ev=>{imageLibrary.push({src:ev.target.result,name:file.name.replace(/\.[^.]+$/,'')});renderLib();};r.readAsDataURL(file);});e.target.value='';});
 
+function generateCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code='P-';
+  for(let i=0;i<4;i++) code+=chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
 async function showNameScreen(){return new Promise(resolve=>{
-  // hide all screens before showing name screen
   document.getElementById('aboutScreen').style.display='none';
   document.getElementById('homeScreen').style.display='none';
-  const scr=document.getElementById('nameScreen'),inp=document.getElementById('nameInput');const ageInp=document.getElementById('ageInput'),genderInp=document.getElementById('genderInput');const btn=document.getElementById('nameContinue');scr.style.display='flex';inp.focus();async function proceed(){const v=inp.value.trim();if(!v){inp.focus();return;}currentUser=v;currentAge=ageInp.value.trim();currentGender=genderInp.value;scr.style.display='none';currentProfile=await loadProfile(currentUser);if(currentProfile){if(!currentAge&&currentProfile.age)currentAge=currentProfile.age;if(!currentGender&&currentProfile.gender)currentGender=currentProfile.gender;}resolve();}btn.addEventListener('click',proceed);inp.addEventListener('keydown',e=>{if(e.key==='Enter')proceed();});});}
+  const scr=document.getElementById('nameScreen');
+  const step1=document.getElementById('nsFormStep1');
+  const step2=document.getElementById('nsFormStep2');
+  const ageInp=document.getElementById('ageInput');
+  const genderInp=document.getElementById('genderInput');
+  const btn=document.getElementById('nameContinue');
+  const codeEl=document.getElementById('nsCode');
+  const codeBtn=document.getElementById('nsCodeContinue');
+
+  // reset to step 1
+  step1.style.display='flex';
+  step2.style.display='none';
+  scr.style.display='flex';
+  ageInp.focus();
+
+  btn.onclick=async()=>{
+    // generate code and show step 2
+    const code=generateCode();
+    currentUser=code;
+    currentAge=ageInp.value.trim();
+    currentGender=genderInp.value;
+    codeEl.textContent=code;
+    step1.style.display='none';
+    step2.style.display='flex';
+
+    // save profile immediately to Supabase
+    try{
+      await sbFetch('profiles?on_conflict=name',{
+        method:'POST',
+        headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
+        body:JSON.stringify({name:currentUser,age:currentAge,gender:currentGender,location:userLocation})
+      });
+    }catch(e){console.warn('[profile:create]',e);}
+  };
+
+  codeBtn.onclick=()=>{
+    scr.style.display='none';
+    resolve();
+  };
+});}
 function startSessionInfoOverlay(){}
 function stopSessionInfoOverlay(){}
 
@@ -1945,7 +1994,7 @@ const TRANSLATIONS = {
       'The very first region noticed - the pre-conscious entry point of visual attention.'
     ],
     startSession:'START',
-    nameLabel:'FULL NAME', namePlaceholder:'Your name',
+    nameLabel:'YOUR CODE', namePlaceholder:'e.g. P-4F7K',
     ageLabel:'AGE', genderLabel:'GENDER',
     male:'Male', female:'Female', other:'Other',
     continueBtn:'CONTINUE',
@@ -1997,7 +2046,7 @@ const TRANSLATIONS = {
       'האזור הראשון שנוצד - נקודת הכניסה הטרום-מודעת של תשומת הלב החזותית.'
     ],
     startSession:'התחל',
-    nameLabel:'שם מלא', namePlaceholder:'שמך',
+    nameLabel:'הקוד שלך', namePlaceholder:'לדוגמה P-4F7K',
     ageLabel:'גיל', genderLabel:'מגדר',
     male:'זכר', female:'נקבה', other:'אחר',
     continueBtn:'המשך',
