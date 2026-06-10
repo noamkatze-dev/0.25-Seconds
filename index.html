@@ -1061,12 +1061,13 @@ async function showNameScreen(initialTab='signup'){return new Promise(resolve=>{
     step1.style.display='none';
     step2.style.display='flex';
     try{
-      await sbFetch('profiles?on_conflict=name',{
+      const result = await sbFetch('profiles?on_conflict=name',{
         method:'POST',
         headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
         body:JSON.stringify({name:currentUser,age:currentAge,gender:currentGender,location:userLocation})
       });
-    }catch(e){console.warn('[profile:create]',e);}
+      console.log('[profile:create] saved', currentUser, result);
+    }catch(e){console.warn('[profile:create] FAILED',e);}
   };
   codeBtn.onclick=()=>{ scr.style.display='none'; resolve(); };
 
@@ -1076,6 +1077,19 @@ async function showNameScreen(initialTab='signup'){return new Promise(resolve=>{
     if(!code){loginInput.focus();return;}
     loginError.style.display='none';
     loginBtn.textContent='...';
+
+    // First check local sessions (in case Supabase save failed)
+    const localMatch = allSessions.find(s=>s.user===code);
+    if(localMatch){
+      currentUser=code;
+      currentAge=localMatch.age||'';
+      currentGender=localMatch.gender||'';
+      scr.style.display='none';
+      resolve();
+      return;
+    }
+
+    // Then check Supabase
     try{
       const rows=await sbFetch(`profiles?name=eq.${encodeURIComponent(code)}&select=*`);
       if(!rows||rows.length===0){
@@ -1090,6 +1104,7 @@ async function showNameScreen(initialTab='signup'){return new Promise(resolve=>{
       scr.style.display='none';
       resolve();
     }catch(e){
+      console.warn('[login]',e);
       loginError.style.display='block';
       loginBtn.textContent='LOG IN';
     }
