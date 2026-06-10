@@ -1057,17 +1057,24 @@ async function showNameScreen(initialTab='signup'){return new Promise(resolve=>{
     currentUser=code;
     currentAge=ageInp.value.trim();
     currentGender=genderInp.value;
-    codeEl.textContent=code;
-    step1.style.display='none';
-    step2.style.display='flex';
+
+    // Save to Supabase FIRST, then show code
+    btn.textContent='...';
     try{
       const result = await sbFetch('profiles?on_conflict=name',{
         method:'POST',
         headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
         body:JSON.stringify({name:currentUser,age:currentAge,gender:currentGender,location:userLocation})
       });
-      console.log('[profile:create] saved', currentUser, result);
-    }catch(e){console.warn('[profile:create] FAILED',e);}
+      console.log('[profile:create] saved', currentUser);
+    }catch(e){
+      console.warn('[profile:create] FAILED', e);
+    }
+
+    codeEl.textContent=code;
+    step1.style.display='none';
+    step2.style.display='flex';
+    btn.textContent='CONTINUE';
   };
   codeBtn.onclick=()=>{ scr.style.display='none'; resolve(); };
 
