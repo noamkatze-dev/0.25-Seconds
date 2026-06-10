@@ -619,6 +619,14 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
 
 <div id="nameScreen">
   <div class="ns-title">VISUAL ANALYSIS SYSTEM</div>
+
+  <!-- Tabs -->
+  <div id="nsTabRow" style="display:flex;gap:0;margin-bottom:36px;border-bottom:1px solid #eee;">
+    <button id="nsTabSignup" style="font-family:Urbanist,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;color:#111;background:none;border:none;border-bottom:2px solid #111;padding:10px 24px 10px 0;cursor:pointer;transition:all 0.15s;">SIGN UP</button>
+    <button id="nsTabLogin" style="font-family:Urbanist,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;color:#bbb;background:none;border:none;border-bottom:2px solid transparent;padding:10px 24px;cursor:pointer;transition:all 0.15s;">LOG IN</button>
+  </div>
+
+  <!-- SIGN UP: step 1 — age + gender -->
   <div class="ns-form" id="nsFormStep1">
     <div class="ns-row">
       <div class="ns-field">
@@ -638,12 +646,22 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
     <button id="nameContinue" class="va-btn va-btn-primary">CONTINUE</button>
   </div>
 
-  <!-- Step 2: show generated code -->
+  <!-- SIGN UP: step 2 — show code -->
   <div id="nsFormStep2" style="display:none;flex-direction:column;align-items:center;gap:24px;">
     <div style="font-size:9px;font-weight:700;letter-spacing:0.45em;color:#bbb;font-family:Urbanist,sans-serif;">YOUR PARTICIPANT CODE</div>
     <div id="nsCode" style="font-size:48px;font-weight:700;color:#111;letter-spacing:0.15em;font-family:Urbanist,sans-serif;"></div>
     <div style="font-size:12px;font-weight:300;color:#999;text-align:center;max-width:280px;line-height:1.7;font-family:Urbanist,sans-serif;">Save this code if you wish to return. It identifies your session anonymously.</div>
     <button id="nsCodeContinue" class="va-btn va-btn-primary">BEGIN</button>
+  </div>
+
+  <!-- LOG IN: enter existing code -->
+  <div class="ns-form" id="nsFormLogin" style="display:none;">
+    <div class="ns-field">
+      <label for="loginCodeInput">YOUR CODE</label>
+      <input id="loginCodeInput" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. P-4F7K" style="text-transform:uppercase;letter-spacing:0.2em;"/>
+    </div>
+    <div id="nsLoginError" style="font-size:11px;color:#FF0003;margin-top:-16px;margin-bottom:8px;display:none;font-family:Urbanist,sans-serif;">Code not found. Please check and try again.</div>
+    <button id="nsLoginBtn" class="va-btn va-btn-primary">LOG IN</button>
   </div>
 </div>
 
@@ -779,6 +797,7 @@ const navLoginBtn=document.getElementById('navLoginBtn');
 navAboutLink.addEventListener('click',()=>openAbout());
 navLoginBtn.addEventListener('click',async()=>{
   await showNameScreen();
+  // if came via login tab, go to home (not start session)
   showAuthNav();
   userLoggedIn=true;
   showHome();
@@ -989,20 +1008,37 @@ async function showNameScreen(){return new Promise(resolve=>{
   const scr=document.getElementById('nameScreen');
   const step1=document.getElementById('nsFormStep1');
   const step2=document.getElementById('nsFormStep2');
+  const formLogin=document.getElementById('nsFormLogin');
   const ageInp=document.getElementById('ageInput');
   const genderInp=document.getElementById('genderInput');
   const btn=document.getElementById('nameContinue');
   const codeEl=document.getElementById('nsCode');
   const codeBtn=document.getElementById('nsCodeContinue');
+  const loginBtn=document.getElementById('nsLoginBtn');
+  const loginInput=document.getElementById('loginCodeInput');
+  const loginError=document.getElementById('nsLoginError');
+  const tabSignup=document.getElementById('nsTabSignup');
+  const tabLogin=document.getElementById('nsTabLogin');
 
-  // reset to step 1
-  step1.style.display='flex';
-  step2.style.display='none';
+  const showSignup=()=>{
+    step1.style.display='flex';step2.style.display='none';formLogin.style.display='none';
+    tabSignup.style.color='#111';tabSignup.style.borderBottomColor='#111';
+    tabLogin.style.color='#bbb';tabLogin.style.borderBottomColor='transparent';
+  };
+  const showLogin=()=>{
+    step1.style.display='none';step2.style.display='none';formLogin.style.display='flex';
+    tabLogin.style.color='#111';tabLogin.style.borderBottomColor='#111';
+    tabSignup.style.color='#bbb';tabSignup.style.borderBottomColor='transparent';
+    setTimeout(()=>loginInput.focus(),50);
+  };
+
+  tabSignup.onclick=showSignup;
+  tabLogin.onclick=showLogin;
+  showSignup();
   scr.style.display='flex';
-  ageInp.focus();
 
+  // SIGN UP
   btn.onclick=async()=>{
-    // generate code and show step 2
     const code=generateCode();
     currentUser=code;
     currentAge=ageInp.value.trim();
@@ -1010,8 +1046,6 @@ async function showNameScreen(){return new Promise(resolve=>{
     codeEl.textContent=code;
     step1.style.display='none';
     step2.style.display='flex';
-
-    // save profile immediately to Supabase
     try{
       await sbFetch('profiles?on_conflict=name',{
         method:'POST',
@@ -1020,11 +1054,34 @@ async function showNameScreen(){return new Promise(resolve=>{
       });
     }catch(e){console.warn('[profile:create]',e);}
   };
+  codeBtn.onclick=()=>{ scr.style.display='none'; resolve(); };
 
-  codeBtn.onclick=()=>{
-    scr.style.display='none';
-    resolve();
+  // LOG IN
+  const doLogin=async()=>{
+    const code=loginInput.value.trim().toUpperCase();
+    if(!code){loginInput.focus();return;}
+    loginError.style.display='none';
+    loginBtn.textContent='...';
+    try{
+      const rows=await sbFetch(`profiles?name=eq.${encodeURIComponent(code)}&select=*`);
+      if(!rows||rows.length===0){
+        loginError.style.display='block';
+        loginBtn.textContent='LOG IN';
+        return;
+      }
+      const profile=rows[0];
+      currentUser=code;
+      currentAge=profile.age||'';
+      currentGender=profile.gender||'';
+      scr.style.display='none';
+      resolve();
+    }catch(e){
+      loginError.style.display='block';
+      loginBtn.textContent='LOG IN';
+    }
   };
+  loginBtn.onclick=doLogin;
+  loginInput.onkeydown=e=>{ if(e.key==='Enter') doLogin(); };
 });}
 function startSessionInfoOverlay(){}
 function stopSessionInfoOverlay(){}
