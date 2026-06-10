@@ -841,7 +841,7 @@ function setNavTheme(theme){
   if(signup){
     signup.style.color = isLight ? '#111' : '#fff';
     signup.style.borderColor = isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)';
-    signup.style.background = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)';
+    signup.style.background = isLight ? 'transparent' : 'rgba(255,255,255,0.08)';
   }
 }
 
@@ -1827,7 +1827,13 @@ function bootHome(){
       const login = document.getElementById('navLoginBtn');
       if(login){
         login.style.color = dark ? '#fff' : '#111';
-        login.style.borderColor = dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.25)';
+        login.style.borderColor = dark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.25)';
+      }
+      const signup = document.getElementById('navSignupBtn');
+      if(signup){
+        signup.style.color = dark ? '#fff' : '#111';
+        signup.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)';
+        signup.style.background = dark ? 'rgba(255,255,255,0.08)' : 'transparent';
       }
     },{passive:true});
   }
