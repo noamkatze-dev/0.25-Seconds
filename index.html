@@ -445,9 +445,9 @@ canvas.va-preview{width:100%;aspect-ratio:5/3;display:block;border-radius:6px;ba
             </div>
           </div>
           <div style="display:flex;gap:12px;margin-top:28px;align-items:center;">
-            <button id="modePrev" style="width:36px;height:36px;border-radius:50%;border:1px solid #eee;background:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#999;transition:all 0.15s;">‹</button>
-            <button id="modeNext" style="width:36px;height:36px;border-radius:50%;border:1px solid #eee;background:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#999;transition:all 0.15s;">›</button>
-            <div id="modeDots" style="display:flex;gap:6px;margin-left:8px;"></div>
+            <button id="modePrev" style="width:44px;height:44px;border-radius:50%;border:1.5px solid #bbb;background:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;color:#333;transition:all 0.15s;">‹</button>
+            <button id="modeNext" style="width:44px;height:44px;border-radius:50%;border:1.5px solid #bbb;background:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;color:#333;transition:all 0.15s;">›</button>
+            <div id="modeDots" style="display:flex;gap:6px;margin-left:24px;margin-right:24px;"></div>
           </div>
         </div>
         <!-- Right: canvas -->
@@ -1599,7 +1599,6 @@ function bootHome(){
   if(hint&&hs){
     hs.addEventListener('scroll',()=>{
       hint.style.opacity=hs.scrollTop>10?'0':'1';
-      // adaptive navbar
       const heroH = document.getElementById('homeHeroSection').offsetHeight;
       const dark = hs.scrollTop < heroH - 10;
       const nav = document.getElementById('mainNav');
@@ -1624,7 +1623,6 @@ function bootHome(){
     },{passive:true});
   }
 
-  // Sky video scrubbing with mouse
   const skyVideo=document.getElementById('homeSkyVideo');
   if(!skyVideo) return;
 
@@ -1646,12 +1644,8 @@ function bootHome(){
   }
 
   function startSkyLoop(){
-    if(!skyLoopRunning){
-      skyLoopRunning = true;
-      requestAnimationFrame(updateSkyVideo);
-    }
+    if(!skyLoopRunning){ skyLoopRunning=true; requestAnimationFrame(updateSkyVideo); }
   }
-
   skyVideo.addEventListener('loadedmetadata', startSkyLoop);
   if(skyVideo.readyState >= 1) startSkyLoop();
   setTimeout(startSkyLoop, 500);
