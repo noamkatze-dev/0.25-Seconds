@@ -1998,12 +1998,15 @@ const TRANSLATIONS = {
     ageLabel:'AGE', genderLabel:'GENDER',
     male:'Male', female:'Female', other:'Other',
     continueBtn:'CONTINUE',
+    participantCode:'YOUR PARTICIPANT CODE',
+    saveCode:'Save this code if you wish to return. It identifies your session anonymously.',
+    beginBtn:'BEGIN',
     calTitle:'EYE TRACKING CALIBRATION',
     calInstr1:'Keep your head still - move only your eyes to each dot',
     calInstr2:'Hold your gaze until the ring fills completely',
     calAfter1:'After calibration, you will see 5 political images, one at a time.',
     calAfter2:'Look naturally - there are no right or wrong answers.',
-    calAfter3:'Each image will appear for 12 seconds.',
+    calAfter3:'Each image will appear for 5 seconds.',
     calBegin:'BEGIN CALIBRATION',
     calReady:'READY',
     calDone:'Calibration complete - the session is about to begin.',
@@ -2014,6 +2017,13 @@ const TRANSLATIONS = {
     startSessionBtn:'START SESSION',
     aboutTitle:'ABOUT', theSystem:'THE SYSTEM', researchFocus:'RESEARCH FOCUS',
     whatWeMeasure:'WHAT WE MEASURE', builtBy:'BUILT BY',
+    imageCredits:'IMAGE CREDITS',
+    imageCreditsDesc:'All images courtesy of the Government Press Office of Israel.',
+    memberSince:'MEMBER SINCE',
+    noSessionsYet:'NO SESSIONS YET',
+    sessionHistory:'SESSION HISTORY',
+    profileTitle:'PROFILE',
+    loading:'LOADING...',
   },
   he: {
     navData:'נתונים', navGallery:'גלריה', navDashboard:'לוח בקרה',
@@ -2050,12 +2060,15 @@ const TRANSLATIONS = {
     ageLabel:'גיל', genderLabel:'מגדר',
     male:'זכר', female:'נקבה', other:'אחר',
     continueBtn:'המשך',
+    participantCode:'קוד המשתתף שלך',
+    saveCode:'שמור את הקוד אם תרצה לחזור. הוא מזהה את הסשן שלך באופן אנונימי.',
+    beginBtn:'התחל',
     calTitle:'כיול מעקב עיניים',
     calInstr1:'שמור על ראשך ללא תנועה - הזז רק את עינייך לכל נקודה',
     calInstr2:'החזק את המבט עד שהטבעת תתמלא לחלוטין',
     calAfter1:'לאחר הכיול תראה 5 תמונות פוליטיות, אחת בכל פעם.',
     calAfter2:'הסתכל באופן טבעי - אין תשובות נכונות או שגויות.',
-    calAfter3:'כל תמונה תופיע למשך 12 שניות.',
+    calAfter3:'כל תמונה תופיע למשך 5 שניות.',
     calBegin:'התחל כיול',
     calReady:'מוכן',
     calDone:'הכיול הושלם - הסשן עומד להתחיל.',
@@ -2066,6 +2079,14 @@ const TRANSLATIONS = {
     startSessionBtn:'התחל סשן',
     aboutTitle:'אודות', theSystem:'המערכת', researchFocus:'מוקד המחקר',
     whatWeMeasure:'מה אנחנו מודדים', builtBy:'נבנה על ידי',
+    imageCredits:'קרדיטים לתמונות',
+    imageCreditsDesc:'כל התמונות באדיבות לשכת העיתונות הממשלתית של ישראל.',
+    memberSince:'משתתף מאז',
+    noSessionsYet:'עדיין אין סשנים',
+    sessionHistory:'היסטוריית סשנים',
+    profileTitle:'פרופיל',
+    loading:'טוען...',
+    readyTitle:'התחל את הסשן שלך עכשיו.',
   }
 };
 
@@ -2124,11 +2145,7 @@ function applyLang(lang){
   const scrollHint = document.getElementById('scrollHint');
   if(scrollHint) scrollHint.childNodes[0].textContent = t.scrollHint + ' ';
 
-  // Name screen
-  const nameLabel = document.querySelector('label[for="nameInput"]');
-  if(nameLabel) nameLabel.textContent = t.nameLabel;
-  const nameInput = document.getElementById('nameInput');
-  if(nameInput) nameInput.placeholder = t.namePlaceholder;
+  // Name screen - new code flow
   const ageLabel = document.querySelector('label[for="ageInput"]');
   if(ageLabel) ageLabel.textContent = t.ageLabel;
   const genderLabel = document.querySelector('label[for="genderInput"]');
@@ -2140,6 +2157,38 @@ function applyLang(lang){
     genderSel.options[1].text = t.male;
     genderSel.options[2].text = t.female;
     genderSel.options[3] && (genderSel.options[3].text = t.other);
+  }
+  // Step 2: code display
+  const participantCodeEl = document.querySelector('#nameScreen [style*="letter-spacing:0.45em"]');
+  if(participantCodeEl && t.participantCode) participantCodeEl.textContent = t.participantCode;
+  const saveCodeEl = document.querySelector('#nameScreen [style*="max-width:280px"]');
+  if(saveCodeEl && t.saveCode) saveCodeEl.textContent = t.saveCode;
+  const beginBtn = document.getElementById('nsCodeContinue');
+  if(beginBtn && t.beginBtn) beginBtn.textContent = t.beginBtn;
+
+  // ns-title
+  const nsTitle = document.querySelector('.ns-title');
+  if(nsTitle) nsTitle.textContent = t.eyebrow;
+
+  // Empty states
+  document.querySelectorAll('.empty-state-overlay').forEach(el=>{
+    const msg = el.querySelector('div:nth-child(2)');
+    const btn = el.querySelector('.empty-state-btn');
+    if(btn) btn.textContent = t.startSessionBtn || t.startBtn;
+  });
+
+  // Gallery screen title
+  const galleryTitle = document.querySelector('#galleryHeader .gallery-title');
+  if(galleryTitle) galleryTitle.textContent = t.navGallery;
+
+  // Dashboard title
+  const dashTitle = document.querySelector('#dashboardHeader .dash-title');
+  if(dashTitle) dashTitle.textContent = t.navDashboard;
+
+  // Profile loading text (if visible)
+  const profileBody = document.getElementById('profileBody');
+  if(profileBody && profileBody.textContent.trim() === 'LOADING...') {
+    profileBody.innerHTML = `<div style="font-size:11px;letter-spacing:0.2em;color:#bbb;text-align:center;padding:40px 0;">${t.loading||'LOADING...'}</div>`;
   }
 
   // Calibration canvas text is drawn dynamically - store lang for drawCalIntro/drawCalDone
