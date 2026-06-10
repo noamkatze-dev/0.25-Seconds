@@ -782,6 +782,31 @@ document.getElementById('navBrand').addEventListener('click',()=>showHome());
 let appStarted=false;
 let userLoggedIn=false;
 
+function setNavTheme(theme){
+  // theme: 'light' (dark text, for white screens) or 'dark' (white text, for home hero)
+  const isLight = theme === 'light';
+  const nav = document.getElementById('mainNav');
+  if(nav){
+    nav.style.background = isLight ? 'rgba(255,255,255,0.85)' : 'transparent';
+    nav.style.backdropFilter = isLight ? 'blur(16px)' : 'none';
+    nav.style.webkitBackdropFilter = isLight ? 'blur(16px)' : 'none';
+    nav.style.borderBottomColor = isLight ? 'rgba(0,0,0,0.06)' : 'transparent';
+  }
+  document.querySelectorAll('.nav-link').forEach(el=>{
+    el.style.color = isLight ? '#111' : 'rgba(255,255,255,0.7)';
+  });
+  const va = document.querySelector('.nav-va');
+  if(va) va.style.color = isLight ? '#111' : '#fff';
+  const lang = document.getElementById('langToggle');
+  if(lang) lang.style.color = isLight ? '#111' : 'rgba(255,255,255,0.7)';
+  const login = document.getElementById('navLoginBtn');
+  if(login){
+    login.style.color = isLight ? '#111' : '#fff';
+    login.style.borderColor = isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)';
+    login.style.background = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)';
+  }
+}
+
 function showHome(){
   hideAllScreens();
   homeScreen.style.display='block';
@@ -1036,6 +1061,7 @@ document.getElementById('cf-layer').addEventListener('change',renderCompareView)
 
 function openGallery(){
   hideAllScreens();
+  setNavTheme('light');
   navGalleryLink.classList.add('active');
   document.getElementById('galleryScreen').style.display='flex';
   if(allSessions.length===0){
@@ -1693,6 +1719,7 @@ function bootHome(){
    ══════════════════════════════════════════════════════════════════════ */
 function openProfile(){
   hideAllScreens();
+  setNavTheme('light');
   navProfileLink.classList.add('active');
   document.getElementById('profileScreen').style.display='flex';
   renderProfile();
@@ -1714,10 +1741,10 @@ async function renderProfile(){
   }
 
   const sessions=profile.sessions||[];
-  const totalFix=sessions.reduce((s,ss)=>s+ss.fixationCount,0);
-  const totalSac=sessions.reduce((s,ss)=>s+ss.saccadeCount,0);
-  const avgFix=sessions.length?Math.round(sessions.reduce((s,ss)=>s+ss.avgFixDur,0)/sessions.length):0;
-  const avgDur=sessions.length?+(sessions.reduce((s,ss)=>s+ss.sessionDuration,0)/sessions.length/1000).toFixed(1):0;
+  const totalFix=sessions.reduce((s,ss)=>s+(ss.fixation_count||0),0);
+  const totalSac=sessions.reduce((s,ss)=>s+(ss.saccade_count||0),0);
+  const avgFix=0; // not stored separately
+  const avgDur=sessions.length?+(sessions.reduce((s,ss)=>s+(ss.session_duration||0),0)/sessions.length/1000).toFixed(1):0;
 
   body.innerHTML=`
     <div style="max-width:800px;margin:0 auto;">
@@ -1729,7 +1756,7 @@ async function renderProfile(){
           <div style="font-size:28px;font-weight:700;color:#111;font-family:Urbanist,sans-serif;">${profile.name}</div>
           <div style="font-size:11px;font-weight:300;color:#999;margin-top:4px;font-family:Urbanist,sans-serif;">${[profile.age?profile.age+'y':'',profile.gender||'',profile.location||''].filter(Boolean).join(' · ')}</div>
         </div>
-        <div style="font-size:9px;font-weight:300;color:#bbb;letter-spacing:0.1em;font-family:Urbanist,sans-serif;">MEMBER SINCE ${new Date(profile.createdAt).toLocaleDateString()}</div>
+        <div style="font-size:9px;font-weight:300;color:#bbb;letter-spacing:0.1em;font-family:Urbanist,sans-serif;">MEMBER SINCE ${new Date(profile.created_at).toLocaleDateString()}</div>
       </div>
 
       <!-- KPIs -->
@@ -1754,14 +1781,14 @@ async function renderProfile(){
         : sessions.slice().reverse().map((s,i)=>`
           <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border:1px solid #eee;border-radius:8px;margin-bottom:8px;font-family:Urbanist,sans-serif;">
             <div>
-              <div style="font-size:11px;font-weight:700;color:#111;">${s.imageName}</div>
-              <div style="font-size:9px;color:#bbb;margin-top:2px;">${new Date(s.timestamp).toLocaleString()}</div>
+              <div style="font-size:11px;font-weight:700;color:#111;">${s.image_name||s.imageName||'—'}</div>
+              <div style="font-size:9px;color:#bbb;margin-top:2px;">${new Date(s.timestamp||s.created_at).toLocaleString()}</div>
             </div>
             <div style="display:flex;gap:20px;text-align:right;">
-              <div><div style="font-size:9px;color:#bbb;">FIXATIONS</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${s.fixationCount}</div></div>
-              <div><div style="font-size:9px;color:#bbb;">SACCADES</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${s.saccadeCount}</div></div>
-              <div><div style="font-size:9px;color:#bbb;">DURATION</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${(s.sessionDuration/1000).toFixed(1)}s</div></div>
-              ${s.ttff!==null?`<div><div style="font-size:9px;color:#bbb;">TTFF</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${s.ttff}s</div></div>`:''}
+              <div><div style="font-size:9px;color:#bbb;">FIXATIONS</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${s.fixation_count||0}</div></div>
+              <div><div style="font-size:9px;color:#bbb;">SACCADES</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${s.saccade_count||0}</div></div>
+              <div><div style="font-size:9px;color:#bbb;">DURATION</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${((s.session_duration||0)/1000).toFixed(1)}s</div></div>
+              ${s.ttff!==null&&s.ttff!==undefined?`<div><div style="font-size:9px;color:#bbb;">TTFF</div><div style="font-size:13px;font-weight:700;color:#FF0003;">${s.ttff}s</div></div>`:''}
             </div>
           </div>`).join('')}
     </div>
@@ -1795,6 +1822,7 @@ navAboutLink.addEventListener('click',()=>openAbout());
 
 function openAbout(){
   hideAllScreens();
+  setNavTheme('light');
   navAboutLink.classList.add('active');
   document.getElementById('aboutScreen').style.display='flex';
 }
@@ -1822,6 +1850,7 @@ function showEmptyState(screenId,msg){
 
 function openDashboard(){
   hideAllScreens();
+  setNavTheme('light');
   navDashboardLink.classList.add('active');
   const scr=document.getElementById('dashboardScreen');
   scr.style.display='flex';
